@@ -49,15 +49,20 @@ class BuildObj {
         files: ['**'],
         extends: null,
         productName: '基础地图',
+        win: { icon: path.join(process.cwd(), 'dist/map-icon.ico') },
         appId: 'com.map-electron.desktop',
         asar: true,
         nsis: {
-          oneClick: true,
+          oneClick: false, // 是否一键安装
+          allowToChangeInstallationDirectory: true, // 允许修改安装目录
+          allowElevation: true, // 允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序。
+          // installerIcon: path.join(process.cwd(), 'public/map-icon.ico'), // 安装图标
+          // uninstallerIcon: path.join(process.cwd(), 'public/map-icon.ico'), // 卸载图标
+          // installerHeaderIcon: path.join(process.cwd(), 'public/map-icon.ico'), // 安装时头部图标
           perMachine: true,
-          allowToChangeInstallationDirectory: false,
-          createDesktopShortcut: true,
-          createStartMenuShortcut: true,
-          shortcutName: 'mapElectron',
+          createDesktopShortcut: true, // 创建桌面图标
+          createStartMenuShortcut: false, // 创建开始菜单图标
+          shortcutName: '基础地图', // 图标名称
         },
         publish: [{ provider: 'generic', url: 'http://localhost:5566/' }],
       },

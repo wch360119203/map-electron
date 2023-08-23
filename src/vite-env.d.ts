@@ -1,1 +1,7 @@
 /// <reference types="vite/client" />
+/// <reference types="element-plus/global.d.ts" />
+declare interface Window {
+  _AMapSecurityConfig: {
+    securityJsCode: string
+  }
+}

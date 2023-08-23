@@ -12,6 +12,7 @@ export function devPlugin(): Plugin {
         external: ['electron'],
       })
       if (!server.httpServer) throw new Error()
+      let electronProcess: ReturnType<typeof spawn>
       server.httpServer.once('listening', () => {
         if (!server.httpServer) throw new Error()
         const addressInfo = server.httpServer.address()
@@ -25,7 +26,7 @@ export function devPlugin(): Plugin {
           httpAddress = `http://${address}:${addressInfo.port}`
           console.log('electron监听地址:', '\x1B[36m', httpAddress, '\x1B[36m')
         }
-        const electronProcess = spawn(
+        electronProcess = spawn(
           require('electron').toString(),
           ['dist/mainEntry.js', httpAddress],
           {
@@ -37,6 +38,10 @@ export function devPlugin(): Plugin {
           server.close()
           process.exit()
         })
+      })
+      // 关闭vite，也干掉electron
+      server.httpServer.once('close', () => {
+        electronProcess?.kill()
       })
     },
   }

@@ -1,37 +1,19 @@
-<script setup lang="ts">
-import { onMounted } from 'vue'
-import { ipcRenderer } from 'electron'
-import HelloWorld from './components/HelloWorld.vue'
-import fs from 'fs'
-onMounted(() => {
-  console.log(fs)
-  console.log(ipcRenderer)
-})
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <ElContainer class="app-main">
+    <el-header height="30px" class="no-padding">
+      <TopBar title="基础地图"></TopBar>
+    </el-header>
+    <el-main class="no-padding">
+      <router-view />
+    </el-main>
+  </ElContainer>
 </template>
-
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+<script setup lang="ts">
+import TopBar from './render/TopBar.vue'
+</script>
+<style>
+.app-main {
+  width: 100vw;
+  height: 100vh;
 }
 </style>

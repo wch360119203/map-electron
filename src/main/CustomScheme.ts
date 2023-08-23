@@ -33,18 +33,17 @@ export class CustomScheme {
   }
   //注册自定义app协议
   static registerScheme() {
-    protocol.registerStreamProtocol('app', (request, callback) => {
-      let pathName = new URL(request.url).pathname
+    protocol.handle('app', (request) => {
+      let { pathname: pathName } = new URL(request.url)
       let extension = path.extname(pathName).toLowerCase()
       if (extension == '') {
         pathName = 'index.html'
         extension = '.html'
       }
       const tarFile = path.join(__dirname, pathName)
-      callback({
-        statusCode: 200,
+      return new Response(fs.readFileSync(tarFile), {
         headers: { 'content-type': this.getMimeType(extension) },
-        data: fs.createReadStream(tarFile),
+        status: 200,
       })
     })
   }
