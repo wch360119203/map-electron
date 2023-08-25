@@ -1,14 +1,15 @@
 import { type Plugin } from 'vite'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 
 export function buildPlugin(): Plugin {
   return {
     name: 'build-plugin',
-    closeBundle: () => {
+    closeBundle: async () => {
       const buildObj = new BuildObj()
       buildObj.buildMain()
       buildObj.preparePackageJson()
+      await buildObj.prepareBettereSqlite3()
       buildObj.buildInstaller()
     },
   }
@@ -27,16 +28,23 @@ class BuildObj {
   }
   //为生产环境准备package.json
   preparePackageJson() {
-    let pkgJsonPath = path.join(process.cwd(), 'package.json')
-    let localPkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'))
-    let electronConfig = localPkgJson.devDependencies.electron.replace('^', '')
+    const pkgJsonPath = path.join(process.cwd(), 'package.json')
+    const localPkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'))
+    const electronConfig = localPkgJson.devDependencies.electron.replace(
+      '^',
+      '',
+    )
     localPkgJson.main = 'mainEntry.js'
     delete localPkgJson.scripts
-    delete localPkgJson.devDependencies
+    delete localPkgJson.devDependencies //干掉所有的开发依赖
     localPkgJson.devDependencies = { electron: electronConfig }
-    let tarJsonPath = path.join(process.cwd(), 'dist', 'package.json')
+    localPkgJson.dependencies === undefined
+    if (!localPkgJson.dependencies) localPkgJson.dependencies = {}
+    localPkgJson.dependencies['better-sqlite3'] = '*'
+    localPkgJson.dependencies['bindings'] = '*'
+    const tarJsonPath = path.join(process.cwd(), 'dist', 'package.json')
     fs.writeFileSync(tarJsonPath, JSON.stringify(localPkgJson))
-    fs.mkdirSync(path.join(process.cwd(), 'dist/node_modules'))
+    fs.ensureDirSync(path.join(process.cwd(), 'dist/node_modules'))
   }
   //使用electron-builder制成安装包
   buildInstaller() {
@@ -69,5 +77,59 @@ class BuildObj {
       project: process.cwd(),
     }
     return require('electron-builder').build(options)
+  }
+
+  /** 编译better-sqlite3 */
+  async prepareBettereSqlite3() {
+    const srcdir = path.join(process.cwd(), 'node_modules/better-sqlite3')
+    const distdir = path.join(process.cwd(), 'dist/node_modules/better-sqlite3')
+    fs.ensureDirSync(distdir)
+    await fs.readdir(srcdir).then(async (list) => {
+      const todo = []
+      list.forEach((fileName) => {
+        const p = fs.copy(
+          path.join(srcdir, fileName),
+          path.join(distdir, fileName),
+          {
+            filter: (src) => {
+              if (
+                src.endsWith('better-sqlite3') ||
+                src.endsWith('build') ||
+                src.endsWith('Release') ||
+                src.endsWith('better_sqlite3.node')
+              )
+                return true
+              else if (src.includes('node_modules\\better-sqlite3\\lib'))
+                return true
+              else return false
+            },
+          },
+        )
+        todo.push(p)
+      })
+      await Promise.all(todo)
+    })
+    const pkgJson = '{"name": "better-sqlite3","main": "lib/index.js"}'
+    const pkgJsonPath = path.join(
+      process.cwd(),
+      `dist/node_modules/better-sqlite3/package.json`,
+    )
+    fs.writeFileSync(pkgJsonPath, pkgJson)
+    const bindingPath = path.join(
+      process.cwd(),
+      'dist/node_modules/bindings/index.js',
+    )
+    fs.ensureFileSync(bindingPath)
+    const bindingsContent = `module.exports = () => {
+      const addonPath = require("path").join(__dirname, '../better-sqlite3/build/Release/better_sqlite3.node');
+      return addonPath;
+      };`
+    fs.writeFileSync(bindingPath, bindingsContent)
+    const bindingPkgJson = `{"name": "bindings","main": "index.js"}`
+    const bindingPkgJsonPath = path.join(
+      process.cwd(),
+      `dist/node_modules/bindings/package.json`,
+    )
+    fs.writeFileSync(bindingPkgJsonPath, bindingPkgJson)
   }
 }

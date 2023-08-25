@@ -8,7 +8,10 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     redirect: '/home',
   },
-  { path: '/home', component: () => import('@/view/Home.vue') },
+  {
+    path: '/home',
+    component: () => import('@/view').then((mod) => mod.HomeVue),
+  },
 ]
 export const router = createRouter({
   history: createWebHashHistory(),

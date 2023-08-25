@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { ipcRenderer } from 'electron'
 import fs from 'fs'
 import { createMap } from '@/ts/l7map'
+import { baseStore } from '@/render/store'
 const mapContainer = ref<HTMLDivElement>()
 onMounted(() => {
   console.log(fs)
@@ -10,6 +11,7 @@ onMounted(() => {
   if (!mapContainer.value) throw new Error('map容器初始化失败')
   createMap(mapContainer.value)
 })
+const basestore = baseStore()
 </script>
 
 <template>
@@ -17,7 +19,10 @@ onMounted(() => {
     <ElMain>
       <div ref="mapContainer" class="map-container"></div>
     </ElMain>
-    <ElAside width="20%">aside</ElAside>
+    <ElAside width="20%"
+      >aside
+      <div @click="basestore.addCount">{{ basestore.count }}</div>
+    </ElAside>
   </ElContainer>
 </template>
 
