@@ -4,12 +4,14 @@ import { ipcRenderer } from 'electron'
 import fs from 'fs'
 import { createMap } from '@/ts/l7map'
 import { baseStore } from '@/render/store'
+import { initLayers } from './initLayers'
 const mapContainer = ref<HTMLDivElement>()
 onMounted(() => {
   console.log('fs:', fs)
   console.log('ipcRenderer:', ipcRenderer)
   if (!mapContainer.value) throw new Error('map容器初始化失败')
-  createMap(mapContainer.value)
+  const { scene } = createMap(mapContainer.value)
+  initLayers(scene)
 })
 const basestore = baseStore()
 </script>

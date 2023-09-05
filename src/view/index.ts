@@ -1,3 +1,3 @@
-import HomeVue from './Home.vue'
+import HomeVue from './Home/Home.vue'
 
 export { HomeVue }

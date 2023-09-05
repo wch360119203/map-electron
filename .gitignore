@@ -26,3 +26,4 @@ release
 
 # 排除key的配置文件
 src/config/key.ts
+data
