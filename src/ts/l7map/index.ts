@@ -2,9 +2,10 @@ import { gaodeKeySecurityJsCode, gaodeToken } from '@/config/key'
 import { Scene } from '@antv/l7'
 import { GaodeMap } from '@antv/l7-maps'
 // 直接全局密钥了
-window._AMapSecurityConfig = {
-  securityJsCode: gaodeKeySecurityJsCode,
-}
+if (gaodeKeySecurityJsCode)
+  window._AMapSecurityConfig = {
+    securityJsCode: gaodeKeySecurityJsCode,
+  }
 export function createMap(dom: HTMLDivElement) {
   const gaodeMap = new GaodeMap({
     style: 'amap://styles/whitesmoke', //https://lbs.amap.com/api/javascript-api-v2/guide/map/map-style
