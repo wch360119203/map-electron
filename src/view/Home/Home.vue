@@ -2,18 +2,26 @@
 import { onMounted, ref } from 'vue'
 import { ipcRenderer } from 'electron'
 import fs from 'fs'
-import { createMap } from '@/ts/l7map'
+import { MapInstance } from '@/ts/l7map'
 import { baseStore } from '@/render/store'
-import { initLayers } from './initLayers'
+import { initLayers } from '@/ts/l7map/initLayers'
+import LoadGeojson from './LoadGeojson.vue'
 const mapContainer = ref<HTMLDivElement>()
+const mapInstance = new MapInstance()
 onMounted(() => {
   console.log('fs:', fs)
   console.log('ipcRenderer:', ipcRenderer)
   if (!mapContainer.value) throw new Error('map容器初始化失败')
-  const { scene } = createMap(mapContainer.value)
-  initLayers(scene)
+  mapInstance.createMap(mapContainer.value)
+  mapInstance.ready.then(() => {
+    initLayers(mapInstance.scene!)
+  })
 })
 const basestore = baseStore()
+function textload(payload: { text: string }) {
+  const json = JSON.parse(payload.text)
+  console.log(json)
+}
 </script>
 
 <template>
@@ -24,6 +32,7 @@ const basestore = baseStore()
     <ElAside width="20%"
       >aside
       <div @click="basestore.addCount">{{ basestore.count }}</div>
+      <LoadGeojson @loadend="textload"></LoadGeojson>
     </ElAside>
   </ElContainer>
 </template>
@@ -35,3 +44,4 @@ const basestore = baseStore()
   height: 100%;
 }
 </style>
+../../ts/l7map/initLayers

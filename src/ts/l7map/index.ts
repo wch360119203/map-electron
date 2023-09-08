@@ -6,13 +6,19 @@ if (gaodeKeySecurityJsCode)
   window._AMapSecurityConfig = {
     securityJsCode: gaodeKeySecurityJsCode,
   }
-export function createMap(dom: HTMLDivElement) {
+function createMap(dom: HTMLDivElement) {
+  // 高德配置参考手册,https://lbs.amap.com/api/javascript-api-v2/documentation#map
   const gaodeMap = new GaodeMap({
-    style: 'amap://styles/whitesmoke', //https://lbs.amap.com/api/javascript-api-v2/guide/map/map-style
-    center: [119.270672, 26.059869],
+    style: 'amap://styles/dark', //https://lbs.amap.com/api/javascript-api-v2/guide/map/map-style
+    center: [118.08, 24.48],
     zoom: 12,
     pitch: 0,
     token: gaodeToken,
+    // pitchEnable: false,
+    // rotateEnable: false,
+    isHotspot: false,
+    terrain: true,
+    viewMode: '2D',
   })
   const scene = new Scene({
     id: dom,
@@ -20,4 +26,21 @@ export function createMap(dom: HTMLDivElement) {
     logoVisible: false,
   })
   return { scene, gaodeMap }
+}
+export class MapInstance {
+  readonly ready
+  private readyHandle!: (value: void | PromiseLike<void>) => void
+  scene?: Scene
+  gaodeMap?: GaodeMap
+  constructor() {
+    this.ready = new Promise<void>((res) => {
+      this.readyHandle = res
+    })
+  }
+  createMap(dom: HTMLDivElement) {
+    const { scene, gaodeMap } = createMap(dom)
+    this.scene = scene
+    this.gaodeMap = gaodeMap
+    this.readyHandle()
+  }
 }

@@ -40,3 +40,24 @@ export function createSvgCom(outerHtml: string) {
     }
   })
 }
+/**返回文件的大小 */
+export function formatFileSize(size: number): string {
+  let rank = 0
+  while (rank < 3 && size > 10240) {
+    rank++
+    size /= 1024
+  }
+  switch (rank) {
+    case 0:
+      return Math.ceil(size) + 'b'
+    case 1:
+      return Math.ceil(size) + 'k'
+    case 2:
+      return Math.ceil(size) + 'M'
+    case 3:
+      return size.toFixed(2) + 'G'
+    default:
+      return size.toString()
+  }
+}
+
