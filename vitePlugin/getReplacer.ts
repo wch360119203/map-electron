@@ -11,6 +11,7 @@ export function getReplacer() {
     'url',
     'better-sqlite3',
     'knex',
+    // 'fs-extra',
   ]
   let result = {}
   for (let item of externalModels) {
@@ -19,6 +20,10 @@ export function getReplacer() {
       code: `const ${item} = require('${item}');export { ${item} as default }`,
     })
   }
+  result['fs-extra'] = () => ({
+    find: new RegExp(`^fs-extra$`),
+    code: `const fse = require('fs-extra');export { fse as default }`,
+  })
   result['electron'] = () => {
     let electronModules = [
       'clipboard',

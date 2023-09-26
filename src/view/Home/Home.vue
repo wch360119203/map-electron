@@ -14,7 +14,7 @@ onMounted(() => {
   if (!mapContainer.value) throw new Error('map容器初始化失败')
   mapInstance.createMap(mapContainer.value)
   mapInstance.ready.then(() => {
-    initLayers(mapInstance.scene!)
+    // initLayers(mapInstance.scene!)
   })
 })
 const basestore = baseStore()
