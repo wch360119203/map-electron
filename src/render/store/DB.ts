@@ -15,6 +15,6 @@ if (!fs.pathExistsSync(dbPath)) {
 }
 export const db = knex({
   client: 'better-sqlite3',
-  connection: 'db/db.db',
+  connection: dbPath,
   useNullAsDefault: true,
 })

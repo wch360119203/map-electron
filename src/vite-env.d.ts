@@ -5,3 +5,5 @@ declare interface Window {
     securityJsCode: string
   }
 }
+
+declare type OmitKey<T, K> = keyof Omit<T, keyof K>

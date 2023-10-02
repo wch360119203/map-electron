@@ -10,7 +10,7 @@ function createMap(dom: HTMLDivElement) {
   // 高德配置参考手册,https://lbs.amap.com/api/javascript-api-v2/documentation#map
   const gaodeMap = new GaodeMap({
     style: 'amap://styles/dark', //https://lbs.amap.com/api/javascript-api-v2/guide/map/map-style
-    center: [118.08, 24.48],
+    center: [115.849336, 39.042734],
     zoom: 12,
     pitch: 0,
     token: gaodeToken,

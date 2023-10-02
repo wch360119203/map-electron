@@ -37,6 +37,8 @@
   },
   "dependencies": {
     "@wuch96/coords-translate": "^0.0.5",
-    "knex": "^2.5.1"
+    "dayjs": "^1.11.10",
+    "knex": "^2.5.1",
+    "xlsx": "^0.18.5"
   }
 }

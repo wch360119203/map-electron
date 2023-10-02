@@ -2,9 +2,9 @@
   <input
     ref="inputDom"
     type="file"
-    accept=".geojson"
+    :accept="props.accept"
     multiple
-    @input="triggerInput"
+    @change="triggerInput"
     :style="{ visibility: 'hidden', position: 'absolute' }"
   />
   <ElButton @click="inputDom?.click()">选择文件</ElButton>
@@ -36,8 +36,15 @@ import { reactive, ref } from 'vue'
 import { formatFileSize } from '@/ts/utils'
 const inputDom = ref<HTMLInputElement>()
 const emits = defineEmits<{
-  (e: 'loadend', payload: { text: string; name: string; total: number }): void
+  (
+    e: 'loadend',
+    payload: { result: ArrayBuffer; name: string; total: number },
+  ): void
 }>()
+const props = defineProps<{
+  accept?: string
+}>()
+
 interface readerState {
   state: 'wait' | 'loading' | 'abort' | 'error' | 'end'
   loaded?: number
@@ -75,16 +82,17 @@ function triggerInput(e: Event) {
       }
       reader.onloadend = () => {
         item.state = 'end'
-        if (typeof reader.result === 'string')
+        if (reader.result instanceof ArrayBuffer)
           emits('loadend', {
-            text: reader.result,
+            result: reader.result,
             name: item.name,
             total: item.total ?? NaN,
           })
       }
-      reader.readAsText(file)
+      reader.readAsArrayBuffer(file)
     }
   }
+  targetDom.value = ''
 }
 function formatStatus(state: readerState['state']) {
   switch (state) {

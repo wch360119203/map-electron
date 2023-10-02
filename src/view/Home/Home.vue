@@ -4,8 +4,8 @@ import { ipcRenderer } from 'electron'
 import fs from 'fs'
 import { MapInstance } from '@/ts/l7map'
 import { baseStore } from '@/render/store'
-import { initLayers } from '@/ts/l7map/initLayers'
-import LoadGeojson from './LoadGeojson.vue'
+import LoadFilesVue from './LoadFiles.vue'
+import { execElsx } from '@/ts/xlsx'
 const mapContainer = ref<HTMLDivElement>()
 const mapInstance = new MapInstance()
 onMounted(() => {
@@ -13,14 +13,11 @@ onMounted(() => {
   console.log('ipcRenderer:', ipcRenderer)
   if (!mapContainer.value) throw new Error('map容器初始化失败')
   mapInstance.createMap(mapContainer.value)
-  mapInstance.ready.then(() => {
-    // initLayers(mapInstance.scene!)
-  })
+  mapInstance.ready.then(() => {})
 })
 const basestore = baseStore()
-function textload(payload: { text: string }) {
-  const json = JSON.parse(payload.text)
-  console.log(json)
+function textload(payload: { result: ArrayBuffer; name: string }) {
+  execElsx(payload.result, payload.name, 'accountBook')
 }
 </script>
 
@@ -32,7 +29,7 @@ function textload(payload: { text: string }) {
     <ElAside width="20%"
       >aside
       <div @click="basestore.addCount">{{ basestore.count }}</div>
-      <LoadGeojson @loadend="textload"></LoadGeojson>
+      <LoadFilesVue @loadend="textload" accept=".xlsx"></LoadFilesVue>
     </ElAside>
   </ElContainer>
 </template>
