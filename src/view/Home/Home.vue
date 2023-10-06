@@ -4,14 +4,15 @@
       <div ref="mapContainer" class="map-container"></div>
     </ElMain>
     <ElAside width="max(20% ,250px)">
-      <LayerManager></LayerManager>
+      <LayerManagerVue></LayerManagerVue>
     </ElAside>
   </ElContainer>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { MapInstance } from '@/ts/l7map'
-import LayerManager from '@/component/LayerManage/LayerManager.vue'
+import LayerManagerVue from '@/component/LayerManage/LayerManager.vue'
+import { LayerManager } from '@/component/LayerManage'
 const emits = defineEmits<{
   (e: 'mapLoaded', map: MapInstance): void
 }>()
@@ -22,6 +23,7 @@ onMounted(() => {
   mapInstance.createMap(mapContainer.value)
   mapInstance.ready.then(() => {
     emits('mapLoaded', mapInstance)
+    mapInstance.scene && LayerManager.instance.linkScene(mapInstance.scene)
   })
 })
 </script>

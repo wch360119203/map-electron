@@ -27,6 +27,8 @@ function createMap(dom: HTMLDivElement) {
   })
   return { scene, gaodeMap }
 }
+
+import arrowSvg from '@/assets/icons/arrow.svg?url'
 export class MapInstance {
   readonly ready
   private readyHandle!: (value: void | PromiseLike<void>) => void
@@ -40,7 +42,13 @@ export class MapInstance {
   createMap(dom: HTMLDivElement) {
     const { scene, gaodeMap } = createMap(dom)
     this.scene = scene
+    this.initTexture(scene)
     this.gaodeMap = gaodeMap
     this.readyHandle()
+  }
+  private initTexture(scene: Scene) {
+    console.log(arrowSvg)
+
+    scene.addImage('sArrow', arrowSvg)
   }
 }

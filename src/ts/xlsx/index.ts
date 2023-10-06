@@ -13,8 +13,7 @@ export async function execElsx(
   const workbook = XLSX.read(data, { type: 'array' })
   const { checkList: sheetNames, date } = await selectSheet(workbook, filename)
   const list = Array<Promise<any>>()
-
-  console.log(workbook, sheetNames)
+  
   switch (type) {
     case 'accountBook':
       const { rid } = (
@@ -30,12 +29,12 @@ export async function execElsx(
           (async () => {
             const sheet = workbook.Sheets[sheetname]
             const { json, fieldDict } = parseAccountBook(sheet)
-            const successInsert = await AccountBook.instance.insert(
+            await AccountBook.instance.insert(
               json,
               fieldDict,
               rid,
+              date.valueOf(),
             )
-            console.log(successInsert)
           })(),
         )
       })
@@ -54,7 +53,7 @@ export async function execElsx(
           (async () => {
             const sheet = workbook.Sheets[sheetname]
             const { json, fieldDict } = parseWorkParam(sheet)
-            await WorkParam.instance.insert(json, fieldDict, id)
+            await WorkParam.instance.insert(json, fieldDict, id, date.valueOf())
           })(),
         )
       })

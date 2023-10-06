@@ -1,6 +1,7 @@
 import { ElMessage } from 'element-plus'
 import { workParam, workParamInput } from '.'
 import { connectDB } from '../DB'
+import { Knex } from 'knex'
 export class WorkParam {
   static instance = new WorkParam()
   private constructor() {}
@@ -8,6 +9,7 @@ export class WorkParam {
     json: Record<string, any>[],
     fieldDict: Record<keyof workParamInput, string>,
     rid: number,
+    validDate: number,
   ) {
     const db = connectDB()
     const updateDate = new Date().valueOf()
@@ -23,25 +25,61 @@ export class WorkParam {
         item.lng = el[fieldDict.lng]
         item.operator = el[fieldDict.operator]
         item.rid = rid
+        item.valid_date = validDate
         item.rotate = el[fieldDict.rotate]
         item.update_date = updateDate
         return item
       })
-    return await new Promise<number[]>((res) => {
-      let ret: number[]
-      db.insert(forInsert)
+    let successCount = 0,
+      failCount = 0
+    const list = forInsert.map((item) =>
+      db
+        .insert(item)
         .into('work_param')
-        .then((r) => {
-          ret = r
-        })
-        .finally(async () => {
-          await db.destroy()
-          ElMessage({
-            type: 'success',
-            message: `成功导入${forInsert.length}条`,
-          })
-          res(ret ?? [])
-        })
+        .then(() => successCount++)
+        .catch(() => failCount++),
+    )
+    await Promise.allSettled(list).finally(() => {
+      let msg = `成功导入${successCount}条`
+      if (failCount > 0) msg += `,失败${failCount}条`
+      ElMessage({
+        type: failCount > 0 ? 'warning' : 'success',
+        message: msg,
+      })
+
+      db.destroy()
     })
+  }
+  async selectById(id: number, db: Knex = connectDB(), autoDes = true) {
+    const target = (
+      await db
+        .select('*')
+        .from('work_param')
+        .where('id', '=', id)
+        .finally(() => {
+          autoDes && db.destroy()
+        })
+    )[0]
+    if (!target) throw new Error('不存在对应的工参')
+    return target
+  }
+  async selectByCommunityName(
+    cname: string,
+    date: number,
+    db: Knex = connectDB(),
+    autoDes = true,
+  ) {
+    const target = (
+      await db
+        .select('*')
+        .from('work_param')
+        .where('valid_date', '<=', date)
+        .andWhere('community_name', '=', cname)
+        .orderBy('valid_date', 'desc')
+        .limit(1)
+        .finally(() => autoDes && db.destroy())
+    )[0]
+    if (!target) throw new Error('不存在对应的工参')
+    return target
   }
 }

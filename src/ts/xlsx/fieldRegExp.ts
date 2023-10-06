@@ -32,10 +32,12 @@ export function matchHeader(headers: string[], reg: RegExp) {
     }
   }
   if (count > 1 || count == 0) {
+    const msg = `解析xlsx失败:${reg.toString()}匹配到${count}个`
     ElMessage({
       type: 'error',
-      message: `解析xlsx失败:${reg.toString()}匹配到${count}个`,
+      message: msg,
     })
+    console.warn(msg)
     throw new Error('')
   }
   return ret

@@ -10,15 +10,12 @@ export class WpRecords {
       // @ts-ignore
       el.update_date = new Date().valueOf()
     })
-    const ret = await new Promise<Pick<wpRecords, 'id'>[]>((res) => {
-      const ret = db
-        .insert(data, 'id')
-        .into('wp_records')
-        .finally(async () => {
-          await db.destroy()
-        })
-      res(ret)
-    })
+    const ret = await db
+      .insert(data, 'id')
+      .into('wp_records')
+      .finally(() => {
+        db.destroy()
+      })
     if (typeof ret[0].id !== 'number') throw new Error()
     return ret
   }

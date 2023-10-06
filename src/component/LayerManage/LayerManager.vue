@@ -2,12 +2,12 @@
   <div>
     <h2>图层</h2>
     <ElScrollbar max-height="30vh"
-      ><p
-        v-for="(item, index) in records"
-        :key="index"
-        class="scrollbar-demo-item"
-      >
-        {{ item.name }}
+      ><p v-for="(item, index) in records" :key="index">
+        <el-checkbox
+          v-model="item.checked"
+          @change="(e) => checkLayer(item.rid,e as boolean)"
+          :label="item.name"
+        />
       </p>
     </ElScrollbar>
     <ElDivider></ElDivider>
@@ -15,13 +15,35 @@
 </template>
 <script setup lang="ts">
 import { BookRecords, bookRecords } from '@/render/store'
-import { onMounted, ref } from 'vue'
-
-const records = ref<bookRecords[]>([])
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { LayerManager } from '.'
+const checkedSet = new Set<number>()
+const records = ref<(bookRecords & { checked: boolean })[]>([])
 async function reflash() {
-  records.value = await BookRecords.instance.select()
+  records.value = (await BookRecords.instance.select()).map((el) =>
+    reactive({
+      ...el,
+      checked: checkedSet.has(el.rid),
+    }),
+  )
 }
 onMounted(() => {
   reflash()
 })
+const rmSymbol = Symbol()
+BookRecords.instance.observer.on('insert', reflash, rmSymbol)
+onUnmounted(() => {
+  BookRecords.instance.observer.offBySymbol(rmSymbol)
+})
+/**图层选中 */
+async function checkLayer(rid: number, isChecked: boolean) {
+  if (!isChecked) {
+    checkedSet.delete(rid)
+    LayerManager.instance.observer.dispatch('layerChange', rid, isChecked)
+    return
+  }
+  checkedSet.add(rid)
+  LayerManager.instance.observer.dispatch('layerChange', rid, isChecked)
+}
 </script>
+<style></style>

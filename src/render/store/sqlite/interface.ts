@@ -13,6 +13,7 @@ export interface bookRecords {
   date: number
 }
 
+/**工参记录表 */
 export interface wpRecords {
   id: number
   name: string
@@ -20,12 +21,14 @@ export interface wpRecords {
   date: number
 }
 
+/**工参表 */
 export interface workParam extends workParamInput {
   id: number
   update_date: number
   is_remove: number
   origin_data: string
   rid: number
+  valid_date: number // 用户选择的时间
 }
 
 export interface workParamInput {
@@ -38,7 +41,8 @@ export interface workParamInput {
 }
 
 export interface baseRecord {
-  update_date: number
+  update_date: number // 写入数据库的时间
+  valid_date: number // 用户选择的时间
   is_remove: number
   origin_data: string
   rid: number

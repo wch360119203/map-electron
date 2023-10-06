@@ -1,6 +1,6 @@
 <template>
   <div>
-    日期选择:
+    生效日期:
     <ElDatePicker v-model="datePicker"></ElDatePicker>
   </div>
   <ElDivider></ElDivider>
