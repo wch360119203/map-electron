@@ -38,10 +38,9 @@ class BuildObj {
     delete localPkgJson.scripts
     delete localPkgJson.devDependencies //干掉所有的开发依赖
     localPkgJson.devDependencies = { electron: electronConfig }
-    localPkgJson.dependencies === undefined
     if (!localPkgJson.dependencies) localPkgJson.dependencies = {}
     localPkgJson.dependencies['better-sqlite3'] = '*'
-    localPkgJson.dependencies['bindings'] = '*'
+    // localPkgJson.dependencies['bindings'] = '*'
     const tarJsonPath = path.join(process.cwd(), 'dist', 'package.json')
     fs.writeFileSync(tarJsonPath, JSON.stringify(localPkgJson))
     fs.ensureDirSync(path.join(process.cwd(), 'dist/node_modules'))
@@ -59,7 +58,7 @@ class BuildObj {
         productName: '基础地图',
         win: { icon: path.join(process.cwd(), 'dist/map-icon.ico') },
         appId: 'com.map-electron.desktop',
-        asar: true,
+        asar: false,
         nsis: {
           oneClick: false, // 是否一键安装
           allowToChangeInstallationDirectory: true, // 允许修改安装目录
@@ -115,21 +114,22 @@ class BuildObj {
       `dist/node_modules/better-sqlite3/package.json`,
     )
     fs.writeFileSync(pkgJsonPath, pkgJson)
-    const bindingPath = path.join(
-      process.cwd(),
-      'dist/node_modules/bindings/index.js',
-    )
-    fs.ensureFileSync(bindingPath)
-    const bindingsContent = `module.exports = () => {
-      const addonPath = require("path").join(__dirname, '../better-sqlite3/build/Release/better_sqlite3.node');
-      return addonPath;
-      };`
-    fs.writeFileSync(bindingPath, bindingsContent)
-    const bindingPkgJson = `{"name": "bindings","main": "index.js"}`
-    const bindingPkgJsonPath = path.join(
-      process.cwd(),
-      `dist/node_modules/bindings/package.json`,
-    )
-    fs.writeFileSync(bindingPkgJsonPath, bindingPkgJson)
+
+    // const bindingPath = path.join(
+    //   process.cwd(),
+    //   'dist/node_modules/bindings/index.js',
+    // )
+    // fs.ensureFileSync(bindingPath)
+    // const bindingsContent = `module.exports = () => {
+    //   const addonPath = require("path").join(__dirname, '../better-sqlite3/build/Release/better_sqlite3.node');
+    //   return addonPath;
+    //   };`
+    // fs.writeFileSync(bindingPath, bindingsContent)
+    // const bindingPkgJson = `{"name": "bindings","main": "index.js"}`
+    // const bindingPkgJsonPath = path.join(
+    //   process.cwd(),
+    //   `dist/node_modules/bindings/package.json`,
+    // )
+    // fs.writeFileSync(bindingPkgJsonPath, bindingPkgJson)
   }
 }

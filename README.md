@@ -18,8 +18,8 @@ export const gaodeToken = '你的key' //token
 ```bash
 pnpm install
 pnpm run postinstall
-pnpm run rebuild
+npm run rebuild
 pnpm run dev
 ```
 
-- 注意 当你的工程下出现了这个文件 node_modules\better-sqlite3\build\Release\better_sqlite3.node，才证明 better_sqlite3 模块编译成功了，如果上述指令没有帮你完成这项工作，你可以把指令配置到 node_modules\better-sqlite3 模块内部再执行一次 pnpm run rebuild
+- 注意 当你的工程下出现了这个文件 node_modules\better-sqlite3\build\Release\better_sqlite3.node，才证明 better_sqlite3 模块编译成功了，如果上述指令没有帮你完成这项工作，你可以把指令配置到 node_modules\better-sqlite3 模块内部再执行一次 npm run rebuild
