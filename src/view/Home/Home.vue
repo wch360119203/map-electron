@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { ipcRenderer } from 'electron'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { MapInstance } from '@/ts/l7map'
 import { baseStore } from '@/render/store'
-import LoadFilesVue from './LoadFiles.vue'
-import { execElsx } from '@/ts/xlsx'
 const mapContainer = ref<HTMLDivElement>()
 const mapInstance = new MapInstance()
 onMounted(() => {
@@ -16,9 +14,6 @@ onMounted(() => {
   mapInstance.ready.then(() => {})
 })
 const basestore = baseStore()
-function textload(payload: { result: ArrayBuffer; name: string }) {
-  execElsx(payload.result, payload.name, 'accountBook')
-}
 </script>
 
 <template>
@@ -26,10 +21,9 @@ function textload(payload: { result: ArrayBuffer; name: string }) {
     <ElMain>
       <div ref="mapContainer" class="map-container"></div>
     </ElMain>
-    <ElAside width="20%"
+    <ElAside width="max(20% ,250px)"
       >aside
       <div @click="basestore.addCount">{{ basestore.count }}</div>
-      <LoadFilesVue @loadend="textload" accept=".xlsx"></LoadFilesVue>
     </ElAside>
   </ElContainer>
 </template>

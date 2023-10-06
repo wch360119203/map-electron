@@ -8,7 +8,7 @@
   <div>
     <ElCheckboxGroup
       v-model="checkList"
-      @change="emits('checked', toRaw(checkList))"
+      @change="emits('checked', toRaw(checkList), toRaw(datePicker))"
     >
       <ElCheckbox
         v-for="(item, index) in sheetNames"
@@ -27,9 +27,14 @@ const props = defineProps<{
 }>()
 const { workbook } = props
 const sheetNames = ref(workbook.SheetNames)
-const checkList = ref<string[]>(
-  workbook.SheetNames.length === 1 ? workbook.SheetNames : [],
-)
+const checkList = ref<string[]>([])
 const datePicker = ref<number>(dayjs().startOf('day').valueOf())
-const emits = defineEmits<{ (e: 'checked', list: string[]): void }>()
+const emits = defineEmits<{
+  (e: 'checked', list: string[], d: number): void
+}>()
+
+if (workbook.SheetNames.length === 1) {
+  checkList.value = workbook.SheetNames
+  emits('checked', toRaw(checkList.value), toRaw(datePicker.value))
+}
 </script>

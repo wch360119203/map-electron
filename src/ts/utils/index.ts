@@ -61,3 +61,13 @@ export function formatFileSize(size: number): string {
   }
 }
 
+/**excel时间到js时间的转换 */
+export function excelTime2JsTime(excelTime: number) {
+  return new Date(
+    (excelTime - 25567) * 24 * 3600000 -
+      5 * 60 * 1000 -
+      43 * 1000 -
+      24 * 3600000 -
+      8 * 3600000,
+  )
+}

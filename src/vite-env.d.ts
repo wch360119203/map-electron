@@ -7,3 +7,4 @@ declare interface Window {
 }
 
 declare type OmitKey<T, K> = keyof Omit<T, keyof K>
+declare type intersectKey<T, K> = keyof Pick<T, keyof K>

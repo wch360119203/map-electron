@@ -1,5 +1,5 @@
 import { ElMessage } from 'element-plus'
-import { acRecord, baseRecord } from '@/render/store'
+import { acRecord, baseRecord, workParamInput } from '@/render/store'
 
 export const accountbookRegExp: Record<
   OmitKey<acRecord, baseRecord>,
@@ -10,6 +10,15 @@ export const accountbookRegExp: Record<
   '65_overload_date': /65%高负荷入表/,
   '7d_avg_availability': /最新利用率/,
   is_resolved: /是否解决/,
+}
+
+export const workParamRegExp: Record<keyof workParamInput, RegExp> = {
+  eNodeBID_CellID: /eNodeBID.*CellID/,
+  community_name: /现.*小区名/,
+  lat: /纬度/,
+  lng: /经度/,
+  rotate: /方位角/,
+  operator: /运营商/,
 }
 
 export function matchHeader(headers: string[], reg: RegExp) {

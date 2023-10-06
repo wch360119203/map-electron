@@ -7,8 +7,10 @@
     @change="triggerInput"
     :style="{ visibility: 'hidden', position: 'absolute' }"
   />
-  <ElButton @click="inputDom?.click()">选择文件</ElButton>
-  <div v-for="item in readers" :key="item.name">
+  <span @click="inputDom?.click()">
+    <slot></slot>
+  </span>
+  <!-- <div v-for="item in readers" :key="item.name">
     <div>
       <ElText type="primary" class="marggin-right-8">
         {{ item.name }}
@@ -29,11 +31,11 @@
         :status="formatStatus(item.state)"
       ></ElProgress>
     </div>
-  </div>
+  </div> -->
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { formatFileSize } from '@/ts/utils'
+// import { formatFileSize } from '@/ts/utils'
 const inputDom = ref<HTMLInputElement>()
 const emits = defineEmits<{
   (
@@ -94,16 +96,16 @@ function triggerInput(e: Event) {
   }
   targetDom.value = ''
 }
-function formatStatus(state: readerState['state']) {
-  switch (state) {
-    case 'end':
-      return 'success'
-    case 'abort':
-      return 'exception'
-    case 'error':
-      return 'warning'
-    default:
-      return
-  }
-}
+// function formatStatus(state: readerState['state']) {
+//   switch (state) {
+//     case 'end':
+//       return 'success'
+//     case 'abort':
+//       return 'exception'
+//     case 'error':
+//       return 'warning'
+//     default:
+//       return
+//   }
+// }
 </script>
