@@ -1,3 +1,4 @@
+import { ElMessage } from 'element-plus'
 import { workParam, workParamInput } from '.'
 import { connectDB } from '../DB'
 export class WorkParam {
@@ -8,7 +9,6 @@ export class WorkParam {
     fieldDict: Record<keyof workParamInput, string>,
     rid: number,
   ) {
-    console.log(json, fieldDict)
     const db = connectDB()
     const updateDate = new Date().valueOf()
     const forInsert = json
@@ -36,7 +36,10 @@ export class WorkParam {
         })
         .finally(async () => {
           await db.destroy()
-          console.log(forInsert, ret)
+          ElMessage({
+            type: 'success',
+            message: `成功导入${forInsert.length}条`,
+          })
           res(ret ?? [])
         })
     })

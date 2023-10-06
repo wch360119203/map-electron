@@ -1,6 +1,7 @@
 import { acRecord, baseRecord } from '@/render/store'
 import { connectDB } from '../DB'
 import { excelTime2JsTime } from '@/ts/utils'
+import { ElMessage } from 'element-plus'
 export class AccountBook {
   static instance = new AccountBook()
   private constructor() {
@@ -35,6 +36,10 @@ export class AccountBook {
         .into('account_book')
         .then((r) => {
           ret = r
+          ElMessage({
+            type: 'success',
+            message: `成功导入${forInsert.length}条`,
+          })
         })
         .finally(async () => {
           await db.destroy()

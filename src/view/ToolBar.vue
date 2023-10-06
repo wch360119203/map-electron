@@ -1,7 +1,7 @@
 <template>
   <ElRow>
     <ElButtonGroup size="small">
-      <ElDropdown trigger="click">
+      <ElDropdown trigger="click" placement="bottom-start">
         <ElButton plain>文件</ElButton>
         <template #dropdown>
           <ElDropdownMenu>
@@ -14,7 +14,7 @@
           </ElDropdownMenu>
         </template>
       </ElDropdown>
-      <ElDropdown trigger="click">
+      <ElDropdown trigger="click" placement="bottom-start">
         <ElButton plain>窗口</ElButton>
         <template #dropdown>
           <ElDropdownMenu>

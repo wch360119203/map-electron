@@ -1,33 +1,30 @@
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { ipcRenderer } from 'electron'
-import fs from 'fs-extra'
-import { MapInstance } from '@/ts/l7map'
-import { baseStore } from '@/render/store'
-const mapContainer = ref<HTMLDivElement>()
-const mapInstance = new MapInstance()
-onMounted(() => {
-  console.log('fs:', fs)
-  console.log('ipcRenderer:', ipcRenderer)
-  if (!mapContainer.value) throw new Error('map容器初始化失败')
-  mapInstance.createMap(mapContainer.value)
-  mapInstance.ready.then(() => {})
-})
-const basestore = baseStore()
-</script>
-
 <template>
   <ElContainer class="fill-container">
     <ElMain>
       <div ref="mapContainer" class="map-container"></div>
     </ElMain>
-    <ElAside width="max(20% ,250px)"
-      >aside
-      <div @click="basestore.addCount">{{ basestore.count }}</div>
+    <ElAside width="max(20% ,250px)">
+      <LayerManager></LayerManager>
     </ElAside>
   </ElContainer>
 </template>
-
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { MapInstance } from '@/ts/l7map'
+import LayerManager from '@/component/LayerManage/LayerManager.vue'
+const emits = defineEmits<{
+  (e: 'mapLoaded', map: MapInstance): void
+}>()
+const mapContainer = ref<HTMLDivElement>()
+const mapInstance = new MapInstance()
+onMounted(() => {
+  if (!mapContainer.value) throw new Error('map容器初始化失败')
+  mapInstance.createMap(mapContainer.value)
+  mapInstance.ready.then(() => {
+    emits('mapLoaded', mapInstance)
+  })
+})
+</script>
 <style lang="scss">
 .map-container {
   position: relative;

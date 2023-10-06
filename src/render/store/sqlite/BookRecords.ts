@@ -22,4 +22,12 @@ export class BookRecords {
     if (typeof ret[0].rid !== 'number') throw new Error()
     return ret
   }
+  async select() {
+    const db = connectDB()
+    const ret = await db
+      .select('*')
+      .from('book_records')
+      .orderBy('date', 'desc')
+    return ret
+  }
 }
