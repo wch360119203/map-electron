@@ -39,6 +39,7 @@
     "fs-extra": "11.1.1",
     "bindings": "1.5.0",
     "@wuch96/coords-translate": "0.0.5",
+    "@wuch96/utils": "^1.0.4",
     "dayjs": "1.11.10",
     "knex": "2.5.1",
     "xlsx": "0.18.5"
