@@ -8,6 +8,9 @@ dependencies:
   '@wuch96/coords-translate':
     specifier: 0.0.5
     version: 0.0.5
+  '@wuch96/utils':
+    specifier: ^1.0.4
+    version: 1.0.4
   bindings:
     specifier: 1.5.0
     version: 1.5.0
@@ -860,7 +863,6 @@ packages:
 
   /@types/geojson@7946.0.11:
     resolution: {integrity: sha512-L7A0AINMXQpVwxHJ4jxD6/XjZ4NDufaRlUJHjNIFKYUFBH1SvOW+neaqb0VTRSLW5suSrSu19ObFEFnfNcr+qg==}
-    dev: true
 
   /@types/http-cache-semantics@4.0.2:
     resolution: {integrity: sha512-FD+nQWA2zJjh4L9+pFXqWOi0Hs1ryBCfI+985NjluQ1p8EYtoLvjLOKidXBtZ4/IcxDX4o8/E8qDS3540tNliw==}
@@ -1110,6 +1112,12 @@ packages:
 
   /@wuch96/coords-translate@0.0.5:
     resolution: {integrity: sha512-QvHqlOerdZuvD4HHmz0MHibfqQq/0tOAcamn/AM2rlikR660nGL4FZo8fvxfZvbpZa0xbuvK2lg3i4HdHf350Q==}
+    dev: false
+
+  /@wuch96/utils@1.0.4:
+    resolution: {integrity: sha512-ktwbKPj37I0AHzJOeSGMeLh5Uir9m3Wev1MJXWz1TJYyRQuXlfs89N4oRp4ZNODWpU4iRSs53C7oelH/jGTr6g==}
+    dependencies:
+      '@types/geojson': 7946.0.11
     dev: false
 
   /@xmldom/xmldom@0.8.10:
