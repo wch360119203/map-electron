@@ -1,7 +1,9 @@
 import { acRecord, workParam } from '@/render/store'
 import { point, featureCollection } from '@turf/helpers'
 import { wgs_gcj } from '@wuch96/coords-translate'
-import { PointLayer } from '@antv/l7'
+import { ILayer, LayerPopup, PointLayer } from '@antv/l7'
+import PopupVue from './Popup.vue'
+import { App, createApp, h } from 'vue'
 export function createGeojson(
   data: {
     book: acRecord
@@ -31,4 +33,29 @@ export function createL7Layer(json: ReturnType<typeof createGeojson>) {
       },
     })
   return layer
+}
+export function bindPopup(layer: ILayer) {
+  let unMount: () => void
+  const popup = new LayerPopup({
+    items: [
+      {
+        layer,
+        customContent: (feature) => {
+          const div = document.createElement('div')
+          const app = createApp(PopupVue, { data: feature })
+          app.mount(div)
+          unMount = () => app.unmount()
+          return div
+        },
+      },
+    ],
+    trigger: 'click',
+  })
+  popup.on('hide', () => {
+    unMount?.()
+  })
+  popup.on('close', () => {
+    unMount?.()
+  })
+  return popup
 }

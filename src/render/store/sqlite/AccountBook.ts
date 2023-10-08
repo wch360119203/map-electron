@@ -92,6 +92,7 @@ export async function writeWpid(
     item.community_name,
     item.valid_date,
     db,
+    autoDes,
   )
   await AccountBook.instance.updateWpid(item.id, find.id, db, autoDes)
   return find.id

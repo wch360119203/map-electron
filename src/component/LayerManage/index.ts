@@ -2,7 +2,7 @@ import { AccountBook, WorkParam, acRecord, writeWpid } from '@/render/store'
 import { connectDB } from '@/render/store/DB'
 import { BaseLayer, PointLayer, Scene } from '@antv/l7'
 import { Observer } from '@wuch96/utils'
-import { createGeojson, createL7Layer } from './createGeojson'
+import { bindPopup, createGeojson, createL7Layer } from './createGeojson'
 import { ElMessage } from 'element-plus'
 export class LayerManager {
   static instance = new LayerManager()
@@ -27,6 +27,7 @@ export class LayerManager {
     this.scene = scene
     this.layers.forEach((layer) => {
       scene.addLayer(layer)
+      scene.addPopup(bindPopup(layer))
     })
   }
   /**获取图层 */
@@ -37,7 +38,10 @@ export class LayerManager {
         (el) => el.wpid != null,
       )
       const layer = await this.createLayer(validBooks)
-      this.scene && this.scene.addLayer(layer)
+      if (this.scene) {
+        this.scene.addLayer(layer)
+        this.scene.addPopup(bindPopup(layer))
+      }
       this.layers.set(rid, layer)
     }
     return this.layers.get(rid)!
