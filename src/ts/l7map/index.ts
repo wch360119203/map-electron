@@ -1,6 +1,7 @@
 import { gaodeKeySecurityJsCode, gaodeToken } from '@/config/key'
 import { Scene } from '@antv/l7'
 import { GaodeMap } from '@antv/l7-maps'
+import icomoonWoffUrl from '../../assets/icomoon.woff?url'
 // 直接全局密钥了
 if (gaodeKeySecurityJsCode)
   window._AMapSecurityConfig = {
@@ -28,7 +29,6 @@ function createMap(dom: HTMLDivElement) {
   return { scene, gaodeMap }
 }
 
-import arrowSvg from '@/assets/icons/arrow.svg?url'
 export class MapInstance {
   readonly ready
   private readyHandle!: (value: void | PromiseLike<void>) => void
@@ -42,13 +42,15 @@ export class MapInstance {
   createMap(dom: HTMLDivElement) {
     const { scene, gaodeMap } = createMap(dom)
     this.scene = scene
-    this.initTexture(scene)
+    this.initFontFamily(scene)
     this.gaodeMap = gaodeMap
     this.readyHandle()
   }
-  private initTexture(scene: Scene) {
-    console.log(arrowSvg)
-
-    scene.addImage('sArrow', arrowSvg)
+  private initFontFamily(scene: Scene) {
+    scene.addIconFont('arrow80', '&#xe900;')
+    scene.addIconFont('arrow120', '&#xe901;')
+    scene.addIconFont('arrow160', '&#xe902;')
+    scene.addIconFont('arrow200', '&#xe903;')
+    scene.addFontFace('arrow-icon', icomoonWoffUrl)
   }
 }

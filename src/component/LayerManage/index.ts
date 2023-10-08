@@ -2,52 +2,59 @@ import { AccountBook, WorkParam, acRecord, writeWpid } from '@/render/store'
 import { connectDB } from '@/render/store/DB'
 import { BaseLayer, PointLayer, Scene } from '@antv/l7'
 import { Observer } from '@wuch96/utils'
-import { bindPopup, createGeojson, createL7Layer } from './createGeojson'
+import {
+  bindPopup,
+  createGeojson,
+  createL7Layer,
+  createL7TextLayer,
+} from './createGeojson'
 import { ElMessage } from 'element-plus'
 export class LayerManager {
   static instance = new LayerManager()
   observer = new Observer<{
     layerChange(acRid: number, isOpened: boolean): void
   }>()
-  layers = new Map<number, BaseLayer>()
+  layers = new Map<number, BaseLayer[]>()
   scene?: Scene
   private constructor() {
     this.observer.on('layerChange', async (acrid, isopen) => {
       const layer = await this.getLayer(acrid)
       if (isopen) {
-        layer.show()
-        layer.fitBounds()
+        layer.forEach(showLayer)
+        layer[0]?.fitBounds()
       } else {
-        layer.hide()
+        layer.forEach(hideLayer)
       }
     })
   }
   /**关联scene */
   linkScene(scene: Scene) {
     this.scene = scene
-    this.layers.forEach((layer) => {
-      scene.addLayer(layer)
-      scene.addPopup(bindPopup(layer))
+    this.layers.forEach((layerArr) => {
+      layerArr.forEach((layer) => {
+        scene.addLayer(layer)
+        scene.addPopup(bindPopup(layer))
+      })
     })
   }
   /**获取图层 */
-  async getLayer(rid: number): Promise<BaseLayer> {
+  async getLayer(rid: number): Promise<BaseLayer[]> {
     if (!this.layers.has(rid)) {
       const books = await AccountBook.instance.selectByRid(rid)
       const validBooks = (await matchBook(books)).filter(
         (el) => el.wpid != null,
       )
-      const layer = await this.createLayer(validBooks)
+      const ls = await this.createLayers(validBooks)
       if (this.scene) {
-        this.scene.addLayer(layer)
-        this.scene.addPopup(bindPopup(layer))
+        ls.forEach((l) => this.scene!.addLayer(l))
+        this.scene.addPopup(bindPopup(ls[0]))
       }
-      this.layers.set(rid, layer)
+      this.layers.set(rid, ls)
     }
     return this.layers.get(rid)!
   }
   /**从台账创建图层 */
-  async createLayer(books: acRecord[]): Promise<PointLayer> {
+  async createLayers(books: acRecord[]): Promise<PointLayer[]> {
     const db = connectDB()
     const data = books.map(async (book) => {
       if (book.wpid == null) throw new Error('')
@@ -65,7 +72,7 @@ export class LayerManager {
       })
       .then((res) => {
         const geojson = createGeojson(res)
-        return createL7Layer(geojson)
+        return [createL7Layer(geojson), createL7TextLayer(geojson)]
       })
       .finally(() => {
         db.destroy()
@@ -104,4 +111,11 @@ async function matchBook(books: acRecord[]) {
     })
   })
   return books
+}
+
+function showLayer(layer: BaseLayer) {
+  layer.show()
+}
+function hideLayer(layer: BaseLayer) {
+  layer.hide()
 }

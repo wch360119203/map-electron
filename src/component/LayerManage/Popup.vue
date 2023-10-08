@@ -33,7 +33,6 @@ const workparams = computed(() => {
 const container = ref<HTMLElement>()
 onMounted(() => {
   container.value?.addEventListener('wheel', (e) => {
-    console.log(e)
     e.stopPropagation()
   })
 })
