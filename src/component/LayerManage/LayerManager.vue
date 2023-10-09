@@ -17,6 +17,16 @@
 import { BookRecords, bookRecords } from '@/render/store'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { LayerManager } from '.'
+import { MapInstance } from '@/ts/l7map'
+
+const manager = new LayerManager()
+const props = defineProps<{
+  map: MapInstance
+}>()
+const mapInstance = props.map
+mapInstance.ready.then((scene) => {
+  manager.linkScene(scene)
+})
 const checkedSet = new Set<number>()
 const records = ref<(bookRecords & { checked: boolean })[]>([])
 async function reflash() {
@@ -39,11 +49,11 @@ onUnmounted(() => {
 async function checkLayer(rid: number, isChecked: boolean) {
   if (!isChecked) {
     checkedSet.delete(rid)
-    LayerManager.instance.observer.dispatch('layerChange', rid, isChecked)
+    manager.hideLayer(rid)
     return
   }
   checkedSet.add(rid)
-  LayerManager.instance.observer.dispatch('layerChange', rid, isChecked)
+  manager.showLayer(rid)
 }
 </script>
 <style></style>

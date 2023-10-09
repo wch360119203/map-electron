@@ -69,7 +69,6 @@ export function createL7TextLayer(json: ReturnType<typeof createGeojson>) {
   })
   layer
     .source(json)
-    // .shape('circle')
     .shape('name', 'text')
     .color('black')
     .size(12)

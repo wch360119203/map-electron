@@ -31,11 +31,11 @@ function createMap(dom: HTMLDivElement) {
 
 export class MapInstance {
   readonly ready
-  private readyHandle!: (value: void | PromiseLike<void>) => void
+  private readyHandle!: (value: Scene | PromiseLike<Scene>) => void
   scene?: Scene
   gaodeMap?: GaodeMap
   constructor() {
-    this.ready = new Promise<void>((res) => {
+    this.ready = new Promise<Scene>((res) => {
       this.readyHandle = res
     })
   }
@@ -44,7 +44,7 @@ export class MapInstance {
     this.scene = scene
     this.initFontFamily(scene)
     this.gaodeMap = gaodeMap
-    this.readyHandle()
+    this.readyHandle(scene)
   }
   private initFontFamily(scene: Scene) {
     scene.addIconFont('arrow80', '&#xe900;')

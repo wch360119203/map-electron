@@ -10,22 +10,25 @@ import {
 } from './createGeojson'
 import { ElMessage } from 'element-plus'
 export class LayerManager {
-  static instance = new LayerManager()
   observer = new Observer<{
     layerChange(acRid: number, isOpened: boolean): void
+    sceneLinked(): void
   }>()
   layers = new Map<number, BaseLayer[]>()
   scene?: Scene
-  private constructor() {
-    this.observer.on('layerChange', async (acrid, isopen) => {
-      const layer = await this.getLayer(acrid)
-      if (isopen) {
-        layer.forEach(showLayer)
-        layer[0]?.fitBounds()
-      } else {
-        layer.forEach(hideLayer)
-      }
-    })
+  constructor() {}
+  /**显示图层，懒加载 */
+  async showLayer(rid: number) {
+    const layers = await this.getLayers(rid)
+    layers.forEach(showLayer)
+    layers[0]?.fitBounds()
+    this.observer.dispatch('layerChange', rid, true)
+  }
+  /**隐藏图层，也会触发加载 */
+  async hideLayer(rid: number) {
+    const layers = await this.getLayers(rid)
+    layers.forEach(hideLayer)
+    this.observer.dispatch('layerChange', rid, false)
   }
   /**关联scene */
   linkScene(scene: Scene) {
@@ -36,9 +39,10 @@ export class LayerManager {
         scene.addPopup(bindPopup(layer))
       })
     })
+    this.observer.dispatch('sceneLinked')
   }
-  /**获取图层 */
-  async getLayer(rid: number): Promise<BaseLayer[]> {
+  /**从台账记录中获取图层 */
+  private async getLayers(rid: number): Promise<BaseLayer[]> {
     if (!this.layers.has(rid)) {
       const books = await AccountBook.instance.selectByRid(rid)
       const validBooks = (await matchBook(books)).filter(
