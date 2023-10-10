@@ -1,3 +1,3 @@
 import HomeVue from './Home/Home.vue'
-
-export { HomeVue }
+import FileManager from './FileManager/FileManager.vue'
+export { HomeVue, FileManager }

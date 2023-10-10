@@ -1,8 +1,16 @@
 <template>
-  <ElRow>
+  <span
+    style="
+       {
+        user-select: all;
+        -webkit-app-region: none;
+        margin-left: 10px;
+      }
+    "
+  >
     <ElButtonGroup size="small">
       <ElDropdown trigger="click" placement="bottom-start">
-        <ElButton plain>文件</ElButton>
+        <ElButton text plain>文件</ElButton>
         <template #dropdown>
           <ElDropdownMenu>
             <UploadAccountBook>
@@ -11,11 +19,14 @@
             <UploadWorkParam>
               <ElDropdownItem>上传工参</ElDropdownItem>
             </UploadWorkParam>
+            <ElDropdownItem @click="router.push({ name: 'file' })"
+              >文件管理</ElDropdownItem
+            >
           </ElDropdownMenu>
         </template>
       </ElDropdown>
       <ElDropdown trigger="click" placement="bottom-start">
-        <ElButton plain>窗口</ElButton>
+        <ElButton text plain>窗口</ElButton>
         <template #dropdown>
           <ElDropdownMenu>
             <ElDropdownItem @click="ipcRenderer.invoke('reload')"
@@ -31,10 +42,11 @@
         </template>
       </ElDropdown>
     </ElButtonGroup>
-  </ElRow>
+  </span>
 </template>
 <script setup lang="ts">
 import { ipcRenderer } from 'electron'
 import UploadAccountBook from '@/component/Toolbar/UploadAccountBook.vue'
 import UploadWorkParam from '@/component/Toolbar/UploadWorkParam.vue'
+import { router } from '@/render'
 </script>

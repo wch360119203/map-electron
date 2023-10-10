@@ -2,17 +2,10 @@
   <el-config-provider :locale="zhCn">
     <ElContainer class="app-main">
       <el-header height="30px" class="no-padding">
-        <TopBar title="基础地图"></TopBar>
+        <TopBar title="基础地图"><ToolBarVue></ToolBarVue></TopBar>
       </el-header>
-      <el-main class="no-padding">
-        <ElContainer class="fill-container">
-          <ElHeader height="30px" class="no-padding">
-            <ToolBarVue></ToolBarVue>
-          </ElHeader>
-          <ElMain class="no-padding">
-            <router-view />
-          </ElMain>
-        </ElContainer>
+      <el-main class="no-padding fill-container">
+        <router-view />
       </el-main>
     </ElContainer>
   </el-config-provider>
