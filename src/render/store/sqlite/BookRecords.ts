@@ -35,4 +35,23 @@ export class BookRecords {
       })
     return ret
   }
+  /**根据rid删除，会连锁删除account_book中的记录 */
+  async delete(rid: number) {
+    if (typeof rid !== 'number') throw new TypeError()
+    const db = connectDB()
+    return await db
+      .transaction(function (trx) {
+        db.from('book_records')
+          .transacting(trx)
+          .where('rid', '=', rid)
+          .del()
+          .then(() =>
+            db('account_book').transacting(trx).where('rid', '=', rid).del(),
+          )
+          .then(trx.commit)
+          .catch(trx.rollback)
+      })
+      .catch(console.error)
+      .finally(() => db.destroy())
+  }
 }
