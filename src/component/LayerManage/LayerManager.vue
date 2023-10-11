@@ -1,13 +1,17 @@
 <template>
-  <div>
+  <div :style="{ paddingRight: '15px' }">
     <h2>图层</h2>
-    <ElScrollbar max-height="30vh"
-      ><p v-for="(item, index) in records" :key="index">
-        <el-checkbox
-          v-model="item.checked"
-          @change="(e) => checkLayer(item.rid,e as boolean)"
-          :label="item.name"
-        />
+    <ElScrollbar max-height="30vh">
+      <p v-for="( item, index ) in  records " :key="index">
+      <div class="check-card">
+        <el-checkbox v-model="item.checked" @change="(e) => checkLayer(item.rid, e as boolean)" :label="item.name" />
+        <ElRow v-if="item.checked" justify="end">
+          <ElCheckboxGroup v-model="item.filter" @change="() => { manager.filterLayers(item.rid, toRaw(item.filter)) }">
+            <ElCheckbox label="电信"></ElCheckbox>
+            <ElCheckbox label="联通"></ElCheckbox>
+          </ElCheckboxGroup>
+        </ElRow>
+      </div>
       </p>
     </ElScrollbar>
     <ElDivider></ElDivider>
@@ -15,7 +19,7 @@
 </template>
 <script setup lang="ts">
 import { BookRecords, bookRecords } from '@/render/store'
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
 import { LayerManager } from '.'
 import { MapInstance } from '@/ts/l7map'
 
@@ -28,12 +32,13 @@ mapInstance.ready.then((scene) => {
   manager.linkScene(scene)
 })
 const checkedSet = new Set<number>()
-const records = ref<(bookRecords & { checked: boolean })[]>([])
+const records = ref<(bookRecords & { checked: boolean; filter: string[] })[]>([])
 async function reflash() {
   records.value = (await BookRecords.instance.select()).map((el) =>
     reactive({
       ...el,
       checked: checkedSet.has(el.rid),
+      filter: reactive(['电信', '联通'])
     }),
   )
 }

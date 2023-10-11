@@ -1,4 +1,10 @@
-import { AccountBook, WorkParam, acRecord, writeWpid } from '@/render/store'
+import {
+  AccountBook,
+  WorkParam,
+  acRecord,
+  workParam,
+  writeWpid,
+} from '@/render/store'
 import { connectDB } from '@/render/store/DB'
 import { BaseLayer, PointLayer, Scene } from '@antv/l7'
 import { Observer } from '@wuch96/utils'
@@ -40,6 +46,17 @@ export class LayerManager {
       })
     })
     this.observer.dispatch('sceneLinked')
+  }
+  /**根据运行商筛选图层 */
+  async filterLayers(rid: number, filter: string[]) {
+    const layers = this.getLayers(rid)
+    const set = new Set(filter)
+    ;(await layers).forEach((layer) => {
+      layer.filter('wp', (wp: workParam) => {
+        return set.has(wp.operator)
+      })
+    })
+    this.scene?.render()
   }
   /**从台账记录中获取图层 */
   private async getLayers(rid: number): Promise<BaseLayer[]> {

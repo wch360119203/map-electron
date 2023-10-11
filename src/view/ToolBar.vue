@@ -38,6 +38,13 @@
             <ElDropdownItem @click="ipcRenderer.invoke('toggleDevTools')"
               >控制台(Ctrl+Shift+I)</ElDropdownItem
             >
+            <ElDivider></ElDivider>
+            <ElDropdownItem @click="router.push({ name: 'file' })"
+              >文件管理</ElDropdownItem
+            >
+            <ElDropdownItem @click="router.push({ name: 'home' })"
+              >地图页</ElDropdownItem
+            >
           </ElDropdownMenu>
         </template>
       </ElDropdown>
