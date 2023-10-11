@@ -24,16 +24,17 @@ export class BookRecords {
     this.observer.dispatch('insert', ret[0].rid)
     return ret
   }
-  async select() {
+  /** */
+  async select(recentDayFilter?: number) {
     const db = connectDB()
-    const ret = await db
-      .select('*')
-      .from('book_records')
-      .orderBy('date', 'desc')
-      .finally(() => {
-        db.destroy()
-      })
-    return ret
+    const query = db.select('*').from('book_records')
+    if (recentDayFilter !== undefined) {
+      const oneday = 24 * 60 * 60 * 1000
+      query.where('date', '>=', new Date().valueOf() - oneday * recentDayFilter)
+    }
+    return await query.orderBy('date', 'desc').finally(() => {
+      db.destroy()
+    })
   }
   /**根据rid删除，会连锁删除account_book中的记录 */
   async delete(rid: number) {
