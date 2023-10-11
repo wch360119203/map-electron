@@ -2,6 +2,7 @@
   <ElContainer class="fill-container">
     <ElMain>
       <div ref="mapContainer" class="map-container"></div>
+      <Legends></Legends>
     </ElMain>
     <ElAside width="max(20% ,250px)">
       <LayerManagerVue :map="mapInstance"></LayerManagerVue>
@@ -12,6 +13,7 @@
 import { onMounted, ref } from 'vue'
 import { MapInstance } from '@/ts/l7map'
 import LayerManagerVue from '@/component/LayerManage/LayerManager.vue'
+import Legends from '@/component/Legends.vue';
 const emits = defineEmits<{
   (e: 'mapcreated', map: MapInstance): void
 }>()
