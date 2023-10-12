@@ -42,31 +42,59 @@
           </template>
         </ElTableColumn>
       </ElTable>
+      <h1>重点场景</h1>
+      <ElTable :data="poiList">
+        <ElTableColumn prop="name" width="300px" label="场景名称"></ElTableColumn>
+        <ElTableColumn width="200px" label="上传日期">
+          <template #default=scope>{{ format(scope.row.update_date) }}</template>
+        </ElTableColumn>
+        <ElTableColumn width="200px" label="操作">
+          <template #default=scope>
+            <el-popconfirm title="删除后不可恢复!" @confirm="Poi.instance.delete(scope.row.id).then(getAllRecord)">
+              <template #reference>
+                <el-button>删除</el-button>
+              </template>
+            </el-popconfirm>
+          </template>
+        </ElTableColumn>
+      </ElTable>
     </div>
   </ElRow>
 </template>
 <script setup lang="ts">
 import { Back } from '@element-plus/icons-vue'
 import { router } from '@/render'
-import { BookRecords, WpRecords, bookRecords, wpRecords } from '@/render/store'
-import { onMounted, ref } from 'vue';
+import { BookRecords, WpRecords, bookRecords, poi, wpRecords, Poi } from '@/render/store'
+import { onMounted, onUnmounted, ref } from 'vue';
 import dayjs from 'dayjs';
 const book = ref<bookRecords[]>([])
 const workparam = ref<wpRecords[]>([])
-function getBookRecord() {
+const poiList = ref<poi[]>([])
+function getAllRecord() {
   BookRecords.instance.select().then(val => { book.value = val })
   WpRecords.instance.select().then(val => { workparam.value = val })
+  Poi.instance.select().then(val => { poiList.value = val })
 }
 onMounted(async () => {
-  getBookRecord()
+  getAllRecord()
 })
 function format(num: number) {
   return dayjs(num).format('YYYY/MM/DD HH:mm:ss')
 }
 function delBook(rid: number) {
-  BookRecords.instance.delete(rid).then(getBookRecord)
+  BookRecords.instance.delete(rid).then(getAllRecord)
 }
 function delWorkParam(rid: number) {
-  WpRecords.instance.delete(rid).then(getBookRecord)
+  WpRecords.instance.delete(rid).then(getAllRecord)
 }
+
+const rmSymbol = Symbol()
+Poi.instance.observer.on('insert', getAllRecord, rmSymbol)
+BookRecords.instance.observer.on('insert', getAllRecord, rmSymbol)
+WpRecords.instance.observer.on('insert', getAllRecord, rmSymbol)
+onUnmounted(() => {
+  Poi.instance.observer.offBySymbol(rmSymbol)
+  BookRecords.instance.observer.offBySymbol(rmSymbol)
+  WpRecords.instance.observer.offBySymbol(rmSymbol)
+})
 </script>

@@ -1,4 +1,4 @@
-import { bookRecords, acRecord, wpRecords, workParam } from '.'
+import { bookRecords, acRecord, wpRecords, workParam, poi } from '.'
 
 /**定义sqlite的表 */
 declare module 'knex/types/tables' {
@@ -7,5 +7,6 @@ declare module 'knex/types/tables' {
     account_book: acRecord
     wp_records: wpRecords
     work_param: workParam
+    poi: poi
   }
 }

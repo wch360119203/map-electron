@@ -1,9 +1,15 @@
 import * as XLSX from 'xlsx'
 import { selectSheet } from './selectSheet'
-import { parseAccountBook, parseWorkParam } from './parse'
-import { BookRecords, AccountBook, WpRecords, WorkParam } from '@/render/store'
+import { parseAccountBook, parsePoi, parseWorkParam } from './parse'
+import {
+  BookRecords,
+  AccountBook,
+  WpRecords,
+  WorkParam,
+  Poi,
+} from '@/render/store'
 
-export type fileType = 'accountBook' | 'workParams'
+type fileType = 'accountBook' | 'workParams' | 'poi'
 
 export async function execElsx(
   data: ArrayBuffer,
@@ -13,7 +19,7 @@ export async function execElsx(
   const workbook = XLSX.read(data, { type: 'array' })
   const { checkList: sheetNames, date } = await selectSheet(workbook, filename)
   const list = Array<Promise<any>>()
-  
+
   switch (type) {
     case 'accountBook':
       const { rid } = (
@@ -39,7 +45,7 @@ export async function execElsx(
         )
       })
       break
-    default:
+    case 'workParams':
       const { id } = (
         await WpRecords.instance.insert([
           {
@@ -58,6 +64,18 @@ export async function execElsx(
         )
       })
       break
+    case 'poi':
+      sheetNames.forEach((sheetname) => {
+        list.push(
+          (async () => {
+            const sheet = workbook.Sheets[sheetname]
+            const json = parsePoi(sheet)
+            Poi.instance.insert(
+              json.map((el) => ({ name: el[0], geojson: el[1] })),
+            )
+          })(),
+        )
+      })
   }
   await Promise.all(list)
 }

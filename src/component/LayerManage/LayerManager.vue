@@ -61,4 +61,3 @@ async function checkLayer(rid: number, isChecked: boolean) {
   manager.showLayer(rid)
 }
 </script>
-<style></style>

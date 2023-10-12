@@ -33,3 +33,8 @@ body {
 .check-card {
   @extend .radius-box;
 }
+
+.hover-highlight:hover {
+  border-color: #409eff;
+  color: #409eff;
+}

@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx'
 import { acRecord, baseRecord, workParamInput } from '@/render/store'
 import { matchHeader, accountbookRegExp, workParamRegExp } from './fieldRegExp'
+import { polygon } from '@turf/helpers'
 export function parseAccountBook(sheet: XLSX.WorkSheet) {
   const header = getHeader(sheet)
   const fieldDict = execAcField(header)
@@ -21,6 +22,31 @@ export function parseWorkParam(sheet: XLSX.WorkSheet) {
     header,
   }
 }
+
+export function parsePoi(sheet: XLSX.WorkSheet) {
+  const json = XLSX.utils.sheet_to_json<Record<string, any>>(sheet)
+  return json.map((item) => {
+    const ret = Array<string>()
+    for (const key of Object.keys(item)) {
+      if (key.includes('名称')) {
+        ret[0] = item[key]
+      } else {
+        ret[1] = string2Polygon(item[key])
+        break
+      }
+    }
+    return ret
+  })
+}
+
+function string2Polygon(str: string): string {
+  const arr = str
+    .trim()
+    .split(' ')
+    .map((el) => el.split(',').map((str) => Number(str)))
+  return JSON.stringify(polygon([arr]))
+}
+
 function execWpField(header: string[]): Record<keyof workParamInput, string> {
   return {
     eNodeBID_CellID: matchHeader(header, workParamRegExp.eNodeBID_CellID),

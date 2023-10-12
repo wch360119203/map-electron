@@ -44,7 +44,9 @@ export class MapInstance {
     this.scene = scene
     this.initFontFamily(scene)
     this.gaodeMap = gaodeMap
-    this.readyHandle(scene)
+    scene.on('loaded', () => {
+      this.readyHandle(scene)
+    })
   }
   private initFontFamily(scene: Scene) {
     scene.addIconFont('arrow80', '&#xe900;')

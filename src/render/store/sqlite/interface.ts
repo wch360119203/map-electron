@@ -49,3 +49,11 @@ export interface baseRecord {
   wpid?: number
   id: number
 }
+
+export interface poi {
+  id: number
+  name: string
+  geojson: string
+  remark?: string
+  update_date: number
+}

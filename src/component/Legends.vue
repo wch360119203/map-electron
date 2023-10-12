@@ -47,7 +47,7 @@ const colorLegends = [
   display: grid;
   grid-template-columns: auto repeat(4, 1fr);
   gap: 15px;
-
+  z-index: 999;
   .circle {
     border-radius: 50%;
     width: 12px;

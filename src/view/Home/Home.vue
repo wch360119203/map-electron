@@ -6,6 +6,7 @@
     </ElMain>
     <ElAside width="max(20% ,250px)">
       <LayerManagerVue :map="mapInstance"></LayerManagerVue>
+      <PoiCardsVue :map="mapInstance"></PoiCardsVue>
     </ElAside>
   </ElContainer>
 </template>
@@ -14,6 +15,7 @@ import { onMounted, ref } from 'vue'
 import { MapInstance } from '@/ts/l7map'
 import LayerManagerVue from '@/component/LayerManage/LayerManager.vue'
 import Legends from '@/component/Legends.vue';
+import PoiCardsVue from '@/component/PoiCards.vue';
 const emits = defineEmits<{
   (e: 'mapcreated', map: MapInstance): void
 }>()
@@ -34,4 +36,3 @@ onMounted(() => {
   height: 100%;
 }
 </style>
-../../ts/l7map/initLayers

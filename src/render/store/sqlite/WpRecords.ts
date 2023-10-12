@@ -1,8 +1,12 @@
+import { Observer } from '@wuch96/utils'
 import { wpRecords } from '.'
 import { connectDB } from '../DB'
 
 export class WpRecords {
   static instance = new WpRecords()
+  observer = new Observer<{
+    insert: (rid: number) => void
+  }>()
   private constructor() {}
   async select() {
     const db = connectDB()
@@ -28,6 +32,7 @@ export class WpRecords {
         db.destroy()
       })
     if (typeof ret[0].id !== 'number') throw new Error()
+    this.observer.dispatch('insert', ret[0].id)
     return ret
   }
   /**根据rid删除，会连锁删除work_param中的记录 */
