@@ -24,7 +24,9 @@ export class BookRecords {
     this.observer.dispatch('insert', ret[0].rid)
     return ret
   }
-  /** */
+  /**
+   * @param recentDayFilter 最近的天数
+   */
   async select(recentDayFilter?: number) {
     const db = connectDB()
     const query = db.select('*').from('book_records')

@@ -32,6 +32,7 @@ export class LayerManager {
   }
   /**隐藏图层，也会触发加载 */
   async hideLayer(rid: number) {
+    if (!this.layers.has(rid)) return
     const layers = await this.getLayers(rid)
     layers.forEach(hideLayer)
     this.observer.dispatch('layerChange', rid, false)
