@@ -70,8 +70,12 @@ onMounted(() => {
 })
 const rmSymbol = Symbol()
 BookRecords.instance.observer.on('insert', setFilter, rmSymbol)
+manager.observer.on('layerChange', () => {
+  mapInstance.scene?.render()
+}, rmSymbol)
 onUnmounted(() => {
   BookRecords.instance.observer.offBySymbol(rmSymbol)
+  manager.observer.offBySymbol(rmSymbol)
 })
 /**图层选中 */
 async function checkLayer(rid: number, isChecked: boolean) {
