@@ -57,6 +57,7 @@ async function getAllPoi() {
 }
 onMounted(() => {
   getAllPoi()
+  removeLayerHandle?.()
 })
 const rmSymbol = Symbol()
 Poi.instance.observer.on('insert', getAllPoi, rmSymbol)
