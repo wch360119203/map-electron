@@ -36,7 +36,7 @@ export function createL7Layer(json: ReturnType<typeof createGeojson>) {
     .color('green')
     .color('book', (book: acRecord) => {
       const rate = book['7d_avg_availability']
-      if (rate < 0.7) return 'green'
+      if (rate < 0.7) return '#fa7e23'
       if (rate <= 0.8) return '#FF7373'
       if (rate <= 0.9) return 'red'
       return '#A60000'
@@ -113,8 +113,8 @@ export function bindPopup(layer: ILayer) {
 function calculateIcon(book: acRecord) {
   const inputDuration = book.valid_date - book['65_overload_date']
   const oneday = 1000 * 60 * 60 * 24
-  if (inputDuration > oneday * 180) return 'arrow200'
-  if (inputDuration > oneday * 90) return 'arrow160'
-  if (inputDuration > oneday * 30) return 'arrow120'
+  if (inputDuration > oneday * 30) return 'arrow200'
+  if (inputDuration > oneday * 14) return 'arrow160'
+  if (inputDuration > oneday * 7) return 'arrow120'
   return 'arrow80'
 }

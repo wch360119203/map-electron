@@ -26,13 +26,13 @@ import arrow120Url from '@/assets/icons/arrow120.svg'
 import arrow160Url from '@/assets/icons/arrow160.svg'
 import arrow200Url from '@/assets/icons/arrow200.svg'
 const shapeLegends = [
-  [arrow80Url, '一个月内'],
-  [arrow120Url, '>30天'],
-  [arrow160Url, '>90天'],
-  [arrow200Url, '>半年'],
+  [arrow80Url, '1周'],
+  [arrow120Url, '2周'],
+  [arrow160Url, '1月内'],
+  [arrow200Url, '超1月'],
 ]
 const colorLegends = [
-  ['green', '<70%'],
+  ['#fa7e23', '<70%'],
   ['#FF7373', '≤80%'],
   ['red', '≤90%'],
   ['#A60000', '超过90%'],
@@ -48,6 +48,7 @@ const colorLegends = [
   grid-template-columns: auto repeat(4, 1fr);
   gap: 15px;
   z-index: 999;
+
   .circle {
     border-radius: 50%;
     width: 12px;

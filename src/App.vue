@@ -2,9 +2,11 @@
   <el-config-provider :locale="zhCn">
     <ElContainer class="app-main">
       <el-header height="30px" class="no-padding">
-        <TopBar title="基础地图"><ToolBarVue></ToolBarVue></TopBar>
+        <TopBar title="基础地图">
+          <ToolBarVue></ToolBarVue>
+        </TopBar>
       </el-header>
-      <el-main class="no-padding fill-container">
+      <el-main class="no-padding fill-container app-content">
         <router-view />
       </el-main>
     </ElContainer>
@@ -21,4 +23,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
   width: 100vw;
   height: 100vh;
 }
-</style>
+
+.app-content {
+  background-image: url('@/assets/texture.png');
+}</style>
