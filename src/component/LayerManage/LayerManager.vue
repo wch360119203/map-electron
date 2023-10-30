@@ -45,6 +45,7 @@ const props = defineProps<{
 const mapInstance = props.map
 mapInstance.ready.then((scene) => {
   manager.linkScene(scene)
+  manager.createWpLayer()
 })
 const checkedSet = new Set<number>()
 const records = ref<(bookRecords & { checked: boolean; filter: string[] })[]>([])

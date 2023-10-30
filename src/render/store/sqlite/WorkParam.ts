@@ -2,8 +2,10 @@ import { ElMessage } from 'element-plus'
 import { workParam, workParamInput } from '.'
 import { connectDB } from '../DB'
 import { Knex } from 'knex'
+import { Observer } from '@wuch96/utils'
 export class WorkParam {
   static instance = new WorkParam()
+  observer = new Observer<{ inserted(): void }>()
   private constructor() {}
   async insert(
     json: Record<string, any>[],
@@ -29,22 +31,35 @@ export class WorkParam {
         return item
       })
     let successCount = 0,
+      updateCount = 0,
       failCount = 0
     const list = forInsert.map((item) =>
       db
-        .upsert(item)
+        .insert(item)
         .into('work_param')
         .then(() => successCount++)
-        .catch(() => failCount++),
+        .catch(() => {
+          return db
+            .table('work_param')
+            .where('eNodeBID_CellID', '=', item.eNodeBID_CellID!)
+            .update(item)
+            .then(() => {
+              updateCount++
+            })
+            .catch(() => {
+              failCount++
+            })
+        }),
     )
     await Promise.allSettled(list).finally(() => {
       let msg = `成功导入${successCount}条`
+      if (updateCount > 0) msg += `,更新${updateCount}条`
       if (failCount > 0) msg += `,失败${failCount}条`
       ElMessage({
         type: failCount > 0 ? 'warning' : 'success',
         message: msg,
       })
-
+      this.observer.dispatch('inserted')
       db.destroy()
     })
   }
@@ -60,6 +75,14 @@ export class WorkParam {
     )[0]
     if (!target) throw new Error('不存在对应的工参')
     return target
+  }
+  async selectAll(db: Knex = connectDB(), autoDes = true) {
+    return await db
+      .select('*')
+      .from('work_param')
+      .finally(() => {
+        autoDes && db.destroy()
+      })
   }
   async selectByCommunityName(
     cname: string,

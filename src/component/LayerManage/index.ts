@@ -21,6 +21,7 @@ export class LayerManager {
     sceneLinked(): void
   }>()
   layers = new Map<number, BaseLayer[]>()
+  wpLayers?: BaseLayer[]
   scene?: Scene
   constructor() {}
   /**显示图层，懒加载 */
@@ -45,6 +46,9 @@ export class LayerManager {
         scene.addLayer(layer)
         scene.addPopup(bindPopup(layer))
       })
+    })
+    this.wpLayers?.forEach((layer) => {
+      scene.addLayer(layer)
     })
     this.observer.dispatch('sceneLinked')
   }
@@ -99,6 +103,22 @@ export class LayerManager {
       .finally(() => {
         db.destroy()
       })
+  }
+  async createWpLayer() {
+    const data = await WorkParam.instance.selectAll()
+    const geojson = createGeojson(
+      data.map((el) => ({
+        wp: el,
+        book: null,
+      })),
+    )
+    const layer1 = createL7Layer(geojson),
+      layer2 = createL7TextLayer(geojson)
+    this.wpLayers = [layer1, layer2]
+    layer1.show()
+    layer2.show()
+    this.scene?.addLayer(layer1)
+    this.scene?.addLayer(layer2)
   }
 }
 

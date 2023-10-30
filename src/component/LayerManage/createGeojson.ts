@@ -8,7 +8,7 @@ import { featureEach } from '@turf/meta'
 import { cloneDeep } from 'lodash-es'
 export function createGeojson(
   data: {
-    book: acRecord
+    book: acRecord | null
     wp: workParam
   }[],
 ) {
@@ -16,8 +16,8 @@ export function createGeojson(
     const lnglat = wgs_gcj({ lat: el.wp.lat, lng: el.wp.lng })
     return point([lnglat.lng, lnglat.lat], {
       ...el,
-      name: el.book.community_name,
-      icon: calculateIcon(el.book),
+      name: el.wp.community_name,
+      icon: calculateIcon(el.wp),
     })
   })
   const collection = featureCollection(points)
@@ -35,6 +35,7 @@ export function createL7Layer(json: ReturnType<typeof createGeojson>) {
     .shape('icon', 'text')
     .color('green')
     .color('book', (book: acRecord) => {
+      if (book?.['7d_avg_availability'] == undefined) return 'skyblue'
       const rate = book['7d_avg_availability']
       if (rate < 0.7) return '#fa7e23'
       if (rate <= 0.8) return '#FF7373'
@@ -110,11 +111,11 @@ export function bindPopup(layer: ILayer) {
 }
 
 /**从入表日期中计算出该使用的icon */
-function calculateIcon(book: acRecord) {
-  const inputDuration = book.valid_date - book['65_overload_date']
-  const oneday = 1000 * 60 * 60 * 24
-  if (inputDuration > oneday * 30) return 'arrow200'
-  if (inputDuration > oneday * 14) return 'arrow160'
-  if (inputDuration > oneday * 7) return 'arrow120'
-  return 'arrow80'
+function calculateIcon(workparam: workParam) {
+  const siteType = workparam.site_type,
+    deviceType = workparam.device_type
+  if (/室分/.test(siteType)) return '■'
+  if (/[2100|2.1G]/.test(deviceType)) return 'arrow120'
+  if (/[1800|1.8G]/.test(deviceType)) return 'arrow160'
+  else return 'arrow200'
 }
