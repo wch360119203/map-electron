@@ -68,7 +68,7 @@ export class AccountBook {
   }
   async updateWpid(
     id: number,
-    wpid: number,
+    wpid: string,
     db: Knex = connectDB(),
     autoDes = true,
   ) {
@@ -94,6 +94,6 @@ export async function writeWpid(
     db,
     autoDes,
   )
-  await AccountBook.instance.updateWpid(item.id, find.id, db, autoDes)
-  return find.id
+  await AccountBook.instance.updateWpid(item.id, find.eNodeBID_CellID, db, autoDes)
+  return find.eNodeBID_CellID
 }

@@ -8,8 +8,6 @@ export class WorkParam {
   async insert(
     json: Record<string, any>[],
     fieldDict: Record<keyof workParamInput, string>,
-    rid: number,
-    validDate: number,
   ) {
     const db = connectDB()
     const updateDate = new Date().valueOf()
@@ -24,8 +22,8 @@ export class WorkParam {
         item.lat = el[fieldDict.lat]
         item.lng = el[fieldDict.lng]
         item.operator = el[fieldDict.operator]
-        item.rid = rid
-        item.valid_date = validDate
+        item.site_type = el[fieldDict.site_type]
+        item.device_type = el[fieldDict.device_type]
         item.rotate = el[fieldDict.rotate]
         item.update_date = updateDate
         return item
@@ -34,7 +32,7 @@ export class WorkParam {
       failCount = 0
     const list = forInsert.map((item) =>
       db
-        .insert(item)
+        .upsert(item)
         .into('work_param')
         .then(() => successCount++)
         .catch(() => failCount++),
@@ -50,7 +48,7 @@ export class WorkParam {
       db.destroy()
     })
   }
-  async selectById(id: number, db: Knex = connectDB(), autoDes = true) {
+  async selectById(id: string, db: Knex = connectDB(), autoDes = true) {
     const target = (
       await db
         .select('*')

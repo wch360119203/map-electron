@@ -19,6 +19,8 @@ export const workParamRegExp: Record<keyof workParamInput, RegExp> = {
   lng: /经度/,
   rotate: /方位角/,
   operator: /运营商/,
+  site_type: /站点类型/,
+  device_type: /设备分类/,
 }
 
 export function matchHeader(headers: string[], reg: RegExp) {

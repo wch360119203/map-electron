@@ -55,6 +55,8 @@ function execWpField(header: string[]): Record<keyof workParamInput, string> {
     lng: matchHeader(header, workParamRegExp.lng),
     operator: matchHeader(header, workParamRegExp.operator),
     rotate: matchHeader(header, workParamRegExp.rotate),
+    site_type: matchHeader(header, workParamRegExp.site_type),
+    device_type: matchHeader(header, workParamRegExp.device_type),
   }
 }
 function execAcField(
