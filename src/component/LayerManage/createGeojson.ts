@@ -25,10 +25,6 @@ export function createGeojson(
 }
 /**创建基本图层 */
 export function createL7Layer(json: ReturnType<typeof createGeojson>) {
-  const copy = cloneDeep(json)
-  featureEach(copy, (el) => {
-    el.properties.icon
-  })
   const layer = new PointLayer({ visible: false })
   layer
     .source(json)
@@ -114,7 +110,7 @@ export function bindPopup(layer: ILayer) {
 function calculateIcon(workparam: workParam) {
   const siteType = workparam.site_type,
     deviceType = workparam.device_type
-  if (/室分/.test(siteType)) return '■'
+  if (/室分/.test(siteType)) return 'sqr'
   if (/[2100|2.1G]/.test(deviceType)) return 'arrow120'
   if (/[1800|1.8G]/.test(deviceType)) return 'arrow160'
   else return 'arrow200'

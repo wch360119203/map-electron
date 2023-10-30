@@ -32,7 +32,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { BookRecords, bookRecords } from '@/render/store'
+import { BookRecords, WorkParam, bookRecords } from '@/render/store'
 import { onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
 import { LayerManager } from '.'
 import { MapInstance } from '@/ts/l7map'
@@ -46,6 +46,9 @@ const mapInstance = props.map
 mapInstance.ready.then((scene) => {
   manager.linkScene(scene)
   manager.createWpLayer()
+})
+WorkParam.instance.observer.on('inserted', () => {
+  manager.updateWpLayer()
 })
 const checkedSet = new Set<number>()
 const records = ref<(bookRecords & { checked: boolean; filter: string[] })[]>([])

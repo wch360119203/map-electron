@@ -53,6 +53,7 @@ export class MapInstance {
     scene.addIconFont('arrow120', '&#xe901;')
     scene.addIconFont('arrow160', '&#xe902;')
     scene.addIconFont('arrow200', '&#xe903;')
+    scene.addIconFont('sqr', '&#xe904;')
     scene.addFontFace('arrow-icon', icomoonWoffUrl)
   }
 }

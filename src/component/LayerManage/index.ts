@@ -120,6 +120,18 @@ export class LayerManager {
     this.scene?.addLayer(layer1)
     this.scene?.addLayer(layer2)
   }
+  async updateWpLayer() {
+    const data = await WorkParam.instance.selectAll()
+    const geojson = createGeojson(
+      data.map((el) => ({
+        wp: el,
+        book: null,
+      })),
+    )
+    this.wpLayers?.forEach((layer) => {
+      layer.setData(geojson)
+    })
+  }
 }
 
 /**匹配台账 */
