@@ -5,7 +5,8 @@
   </ElRow>
   <ElTable :data="poiList">
     <ElTableColumn prop="id" width="100px" label="id"></ElTableColumn>
-    <ElTableColumn prop="name" width="300px" label="场景名称"></ElTableColumn>
+    <ElTableColumn prop="name" width="400px" label="场景名称"></ElTableColumn>
+    <ElTableColumn prop="remark" width="100px" label="备注"></ElTableColumn>
     <ElTableColumn width="200px" label="上传日期">
       <template #default=scope>{{ format(scope.row.update_date) }}</template>
     </ElTableColumn>

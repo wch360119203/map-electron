@@ -9,6 +9,7 @@ export interface acRecord extends baseRecord {
 export interface bookRecords {
   rid: number
   name: string
+  operator: string
   update_date: number
   date: number
 }

@@ -6,14 +6,15 @@
       </div>
       <h1>台账记录</h1>
       <ElTable :data="book">
-        <ElTableColumn prop="name" width="300px" label="文件名"></ElTableColumn>
-        <ElTableColumn width="200px" label="生效日期">
+        <ElTableColumn prop="name" width="380px" label="文件名"></ElTableColumn>
+        <ElTableColumn prop="operator" width="80px" label="运营商"></ElTableColumn>
+        <ElTableColumn width="170px" label="生效日期">
           <template #default=scope>{{ format(scope.row.date) }}</template>
         </ElTableColumn>
-        <ElTableColumn width="200px" label="上传日期">
+        <ElTableColumn width="170px" label="上传日期">
           <template #default=scope>{{ format(scope.row.update_date) }}</template>
         </ElTableColumn>
-        <ElTableColumn width="200px" label="操作">
+        <ElTableColumn width="200" label="操作">
           <template #default=scope>
             <el-popconfirm title="删除后不可恢复!" @confirm="delBook(scope.row.rid)">
               <template #reference>

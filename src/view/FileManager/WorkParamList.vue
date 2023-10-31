@@ -13,7 +13,7 @@
     </ElTableColumn>
     <ElTableColumn width="200px" label="操作">
       <template #default=scope>
-        <el-popconfirm title="删除后不可恢复!" @confirm="WorkParam.instance.selectById(scope.row.id).then(getValue)">
+        <el-popconfirm title="删除后不可恢复!" @confirm="WorkParam.instance.delById(scope.row.eNodeBID_CellID).then(getValue)">
           <template #reference>
             <el-button>删除</el-button>
           </template>

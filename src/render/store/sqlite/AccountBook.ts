@@ -45,7 +45,10 @@ export class AccountBook {
           trx('account_book')
             .insert(item)
             .then(() => successCount++)
-            .catch(() => failCount++),
+            .catch((err) => {
+              console.error(err)
+              failCount++
+            }),
         )
         await Promise.allSettled(list).finally(() => {
           let msg = `成功导入${successCount}条`

@@ -72,13 +72,24 @@ export class WorkParam {
       await db
         .select('*')
         .from('work_param')
-        .where('id', '=', id)
+        .where('eNodeBID_CellID', '=', id)
         .finally(() => {
           autoDes && db.destroy()
         })
     )[0]
     if (!target) throw new Error('不存在对应的工参')
     return target
+  }
+  async delById(id: string, db: Knex = connectDB(), autoDes = true) {
+    return await db('work_param')
+      .where('eNodeBID_CellID', '=', id)
+      .delete()
+      .then(() => {
+        this.observer.dispatch('inserted')
+      })
+      .finally(() => {
+        autoDes && db.destroy()
+      })
   }
   async selectAll(db: Knex = connectDB(), autoDes = true) {
     return await db
