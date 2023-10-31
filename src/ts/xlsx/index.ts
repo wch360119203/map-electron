@@ -21,6 +21,10 @@ export async function execElsx(
       needDate: true,
       needOperator: true,
     })
+    const parseRes = sheetNames.map((sheetname) => {
+      const sheet = workbook.Sheets[sheetname]
+      return parseAccountBook(sheet)
+    })
     const { rid } = (
       await BookRecords.instance.insert([
         {
@@ -30,11 +34,10 @@ export async function execElsx(
         },
       ])
     )[0]
-    sheetNames.forEach((sheetname) => {
+    sheetNames.forEach((_sheetname, index) => {
       list.push(
         (async () => {
-          const sheet = workbook.Sheets[sheetname]
-          const { json, fieldDict } = parseAccountBook(sheet)
+          const { json, fieldDict } = parseRes[index]
           await AccountBook.instance.insert(
             json,
             fieldDict,
