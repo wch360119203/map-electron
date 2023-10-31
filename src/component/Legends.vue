@@ -9,7 +9,7 @@
         <ElText size="small">{{ item[1] }}</ElText>
       </ElRow>
     </div>
-    <ElText size="small" class="legend">入表时长</ElText>
+    <ElText size="small" class="legend">设备类型</ElText>
     <div class="legend" v-for="(item, index) in shapeLegends" :key="index">
       <ElRow justify="center">
         <img :src="item[0]" :style="{ width: '20px', height: '20px' }" />
@@ -21,15 +21,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import arrow80Url from '@/assets/icons/arrow80.svg'
+import sqrUrl from '@/assets/icons/sqr.svg'
 import arrow120Url from '@/assets/icons/arrow120.svg'
 import arrow160Url from '@/assets/icons/arrow160.svg'
 import arrow200Url from '@/assets/icons/arrow200.svg'
 const shapeLegends = [
-  [arrow80Url, '1周'],
-  [arrow120Url, '2周'],
-  [arrow160Url, '1月内'],
-  [arrow200Url, '超1月'],
+  [sqrUrl, '室分'],
+  [arrow120Url, '2.1G'],
+  [arrow160Url, '1.8G'],
+  [arrow200Url, '800/900'],
 ]
 const colorLegends = [
   ['#fa7e23', '<70%'],

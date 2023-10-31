@@ -17,6 +17,7 @@ function createMap(dom: HTMLDivElement) {
     token: gaodeToken,
     // pitchEnable: false,
     // rotateEnable: false,
+    maxZoom: 23,
     isHotspot: false,
     terrain: true,
     viewMode: '2D',

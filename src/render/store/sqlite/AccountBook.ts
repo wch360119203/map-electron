@@ -3,8 +3,10 @@ import { connectDB } from '../DB'
 import { excelTime2JsTime } from '@/ts/utils'
 import { ElMessage } from 'element-plus'
 import { Knex } from 'knex'
+import { Observer } from '@wuch96/utils'
 export class AccountBook {
   static instance = new AccountBook()
+  observer = new Observer<{ inserted(): void }>()
   private constructor() {
     // this.db = db<acRecord>('account_book')
   }
@@ -37,23 +39,28 @@ export class AccountBook {
       })
     let successCount = 0,
       failCount = 0
-    const list = forInsert.map((item) =>
-      db
-        .insert(item)
-        .into('account_book')
-        .then(() => successCount++)
-        .catch(() => failCount++),
-    )
-    await Promise.allSettled(list).finally(() => {
-      let msg = `成功导入${successCount}条`
-      if (failCount > 0) msg += `,失败${failCount}条`
-      ElMessage({
-        type: failCount > 0 ? 'warning' : 'success',
-        message: msg,
+    await db
+      .transaction(async (trx) => {
+        const list = forInsert.map((item) =>
+          trx('account_book')
+            .insert(item)
+            .then(() => successCount++)
+            .catch(() => failCount++),
+        )
+        await Promise.allSettled(list).finally(() => {
+          let msg = `成功导入${successCount}条`
+          if (failCount > 0) msg += `,失败${failCount}条`
+          ElMessage({
+            type: failCount > 0 ? 'warning' : 'success',
+            message: msg,
+          })
+          trx.commit()
+          this.observer.dispatch('inserted')
+        })
       })
-
-      db.destroy()
-    })
+      .finally(() => {
+        db.destroy()
+      })
   }
 
   async selectByRid(rid: number) {
@@ -94,6 +101,11 @@ export async function writeWpid(
     db,
     autoDes,
   )
-  await AccountBook.instance.updateWpid(item.id, find.eNodeBID_CellID, db, autoDes)
+  await AccountBook.instance.updateWpid(
+    item.id,
+    find.eNodeBID_CellID,
+    db,
+    autoDes,
+  )
   return find.eNodeBID_CellID
 }

@@ -17,7 +17,7 @@ export class WorkParam {
       .filter((el) => el[fieldDict.eNodeBID_CellID] !== undefined)
       .map((el) => {
         const item: Partial<workParam> = {}
-        item.origin_data = JSON.stringify(el)
+        item.origin_data = 'JSON.stringify(el)'
         item.community_name = el[fieldDict.community_name]
         item.eNodeBID_CellID = el[fieldDict.eNodeBID_CellID]
         item.is_remove = 0
@@ -33,35 +33,39 @@ export class WorkParam {
     let successCount = 0,
       updateCount = 0,
       failCount = 0
-    const list = forInsert.map((item) =>
-      db
-        .insert(item)
-        .into('work_param')
-        .then(() => successCount++)
-        .catch(() => {
-          return db
-            .table('work_param')
-            .where('eNodeBID_CellID', '=', item.eNodeBID_CellID!)
-            .update(item)
-            .then(() => {
-              updateCount++
-            })
+    await db
+      .transaction(async (trx) => {
+        const list = forInsert.map((item) =>
+          trx('work_param')
+            .insert(item)
+            .then(() => successCount++)
             .catch(() => {
-              failCount++
-            })
-        }),
-    )
-    await Promise.allSettled(list).finally(() => {
-      let msg = `成功导入${successCount}条`
-      if (updateCount > 0) msg += `,更新${updateCount}条`
-      if (failCount > 0) msg += `,失败${failCount}条`
-      ElMessage({
-        type: failCount > 0 ? 'warning' : 'success',
-        message: msg,
+              return trx('work_param')
+                .where('eNodeBID_CellID', '=', item.eNodeBID_CellID!)
+                .update(item)
+                .then(() => {
+                  updateCount++
+                })
+                .catch(() => {
+                  failCount++
+                })
+            }),
+        )
+        await Promise.allSettled(list).finally(() => {
+          trx.commit()
+          this.observer.dispatch('inserted')
+        })
       })
-      this.observer.dispatch('inserted')
-      db.destroy()
-    })
+      .finally(() => {
+        let msg = `成功导入${successCount}条`
+        if (updateCount > 0) msg += `,更新${updateCount}条`
+        if (failCount > 0) msg += `,失败${failCount}条`
+        ElMessage({
+          type: failCount > 0 ? 'warning' : 'success',
+          message: msg,
+        })
+        db.destroy()
+      })
   }
   async selectById(id: string, db: Knex = connectDB(), autoDes = true) {
     const target = (

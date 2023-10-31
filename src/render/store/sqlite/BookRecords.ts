@@ -44,13 +44,10 @@ export class BookRecords {
     const db = connectDB()
     return await db
       .transaction(function (trx) {
-        db.from('book_records')
-          .transacting(trx)
+        trx('book_records')
           .where('rid', '=', rid)
           .del()
-          .then(() =>
-            db('account_book').transacting(trx).where('rid', '=', rid).del(),
-          )
+          .then(() => trx('account_book').where('rid', '=', rid).del())
           .then(trx.commit)
           .catch(trx.rollback)
       })
