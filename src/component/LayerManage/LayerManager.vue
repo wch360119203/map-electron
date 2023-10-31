@@ -2,7 +2,7 @@
   <div :style="{ paddingRight: '15px' }">
     <h2>图层</h2>
     <ElRow>
-      <ElText size="small">筛选：</ElText>
+      <ElText size="small">时间筛选：</ElText>
       <ElRadioGroup @change="setFilter" v-model="recentlyFilter">
         <ElRadio :label="7">最近7天</ElRadio>
         <ElRadio :label="14">最近14天</ElRadio>
@@ -15,16 +15,18 @@
         <ElText size="default"> 天</ElText>
       </span>
     </ElRow>
+    <ElRow>
+      <ElText size="small">运营商：</ElText>
+      <ElRadioGroup v-model="operatorFilter">
+        <ElRadio label="全部"></ElRadio>
+        <ElRadio label="电信"></ElRadio>
+        <ElRadio label="联通"></ElRadio>
+      </ElRadioGroup>
+    </ElRow>
     <ElScrollbar max-height="30vh" v-loading=isloading>
       <p v-for="( item, index ) in  records " :key="index">
       <div class="check-card">
         <el-checkbox v-model="item.checked" @change="(e) => checkLayer(item.rid, e as boolean)" :label="item.name" />
-        <ElRow v-if="item.checked" justify="end">
-          <ElCheckboxGroup v-model="item.filter" @change="() => { manager.filterLayers(item.rid, toRaw(item.filter)) }">
-            <ElCheckbox label="电信"></ElCheckbox>
-            <ElCheckbox label="联通"></ElCheckbox>
-          </ElCheckboxGroup>
-        </ElRow>
       </div>
       </p>
     </ElScrollbar>
@@ -33,11 +35,12 @@
 </template>
 <script setup lang="ts">
 import { BookRecords, WorkParam, bookRecords } from '@/render/store'
-import { onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { LayerManager } from '.'
 import { MapInstance } from '@/ts/l7map'
 import { throttle } from 'lodash-es'
 const isloading = ref(true)
+const operatorFilter = ref('全部')
 const manager = new LayerManager()
 const props = defineProps<{
   map: MapInstance
