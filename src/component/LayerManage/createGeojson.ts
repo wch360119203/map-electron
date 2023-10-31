@@ -4,8 +4,6 @@ import { wgs_gcj } from '@wuch96/coords-translate'
 import { ILayer, LayerPopup, PointLayer } from '@antv/l7'
 import PopupVue from './Popup.vue'
 import { createApp } from 'vue'
-import { featureEach } from '@turf/meta'
-import { cloneDeep } from 'lodash-es'
 export function createGeojson(
   data: {
     book: acRecord | null

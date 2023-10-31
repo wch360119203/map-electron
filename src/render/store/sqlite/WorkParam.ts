@@ -88,6 +88,32 @@ export class WorkParam {
         autoDes && db.destroy()
       })
   }
+  async selectPg(page = 1, size = 10) {
+    const offset = page * size - size
+    const db = connectDB()
+    const query = db.select('*').offset(offset).limit(size).from('work_param')
+    return await query.finally(() => {
+      db.destroy()
+    })
+  }
+  async count() {
+    const db = connectDB()
+    const res = await db('work_param')
+      .count()
+      .finally(() => {
+        db.destroy()
+      })
+    const count = (res[0]?.['count(*)'] as number) ?? 0
+    return count
+  }
+  async deleteAll() {
+    const db = connectDB()
+    return db('work_param')
+      .truncate()
+      .finally(() => {
+        db.destroy()
+      })
+  }
   async selectByCommunityName(
     cname: string,
     date: number,

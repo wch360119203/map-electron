@@ -30,9 +30,8 @@ export function parsePoi(sheet: XLSX.WorkSheet) {
     for (const key of Object.keys(item)) {
       if (key.includes('名称')) {
         ret[0] = item[key]
-      } else {
+      } else if (key.includes('经纬度')) {
         ret[1] = string2Polygon(item[key])
-        break
       }
     }
     return ret
