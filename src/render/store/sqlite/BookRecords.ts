@@ -27,12 +27,15 @@ export class BookRecords {
   /**
    * @param recentDayFilter 最近的天数
    */
-  async select(recentDayFilter?: number) {
+  async select(recentDayFilter?: number, operator?: string) {
     const db = connectDB()
     const query = db.select('*').from('book_records')
     if (recentDayFilter !== undefined) {
       const oneday = 24 * 60 * 60 * 1000
       query.where('date', '>=', new Date().valueOf() - oneday * recentDayFilter)
+    }
+    if (operator !== undefined && operator !== '全部') {
+      query.where('operator', '=', operator)
     }
     return await query.orderBy('date', 'desc').finally(() => {
       db.destroy()

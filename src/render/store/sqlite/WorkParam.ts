@@ -6,7 +6,13 @@ import { Observer } from '@wuch96/utils'
 export class WorkParam {
   static instance = new WorkParam()
   observer = new Observer<{ inserted(): void }>()
-  private constructor() {}
+  protected allDataCache?: workParam[]
+  private constructor() {
+    this.observer.on('inserted', () => {
+      this.allDataCache = undefined
+      this.communityMapCache = undefined
+    })
+  }
   async insert(
     json: Record<string, any>[],
     fieldDict: Record<keyof workParamInput, string>,
@@ -92,12 +98,18 @@ export class WorkParam {
       })
   }
   async selectAll(db: Knex = connectDB(), autoDes = true) {
-    return await db
+    if (this.allDataCache !== undefined) {
+      if (autoDes) db.destroy()
+      return this.allDataCache
+    }
+    const res = await db
       .select('*')
       .from('work_param')
       .finally(() => {
         autoDes && db.destroy()
       })
+    this.allDataCache = res
+    return res
   }
   async selectPg(page = 1, size = 10) {
     const offset = page * size - size
@@ -143,5 +155,13 @@ export class WorkParam {
     )[0]
     if (!target) throw new Error('不存在对应的工参')
     return target
+  }
+  private communityMapCache?: Map<string, workParam>
+  async getCommunityMap() {
+    if (this.communityMapCache) return this.communityMapCache
+    const data = await this.selectAll()
+    return (this.communityMapCache = new Map(
+      data.map((el) => [el.community_name, el]),
+    ))
   }
 }

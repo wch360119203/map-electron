@@ -17,7 +17,7 @@
     </ElRow>
     <ElRow>
       <ElText size="small">运营商：</ElText>
-      <ElRadioGroup v-model="operatorFilter">
+      <ElRadioGroup v-model="operatorFilter" @change="setFilter">
         <ElRadio label="全部"></ElRadio>
         <ElRadio label="电信"></ElRadio>
         <ElRadio label="联通"></ElRadio>
@@ -54,14 +54,13 @@ WorkParam.instance.observer.on('inserted', () => {
   manager.updateWpLayer()
 })
 const checkedSet = new Set<number>()
-const records = ref<(bookRecords & { checked: boolean; filter: string[] })[]>([])
+const records = ref<(bookRecords & { checked: boolean })[]>([])
 async function reflash(recentlyDay: number) {
   isloading.value = true
-  const newRecords = (await BookRecords.instance.select(recentlyDay)).map((el) =>
+  const newRecords = (await BookRecords.instance.select(recentlyDay, operatorFilter.value)).map((el) =>
     reactive({
       ...el,
       checked: checkedSet.has(el.rid),
-      filter: reactive(['电信', '联通'])
     }),
   )
   const set = new Set<number>(records.value.map(el => el.rid))
@@ -99,7 +98,6 @@ const recentlyFilter = ref(7)
 const diyRecentlyFilter = ref(30)
 const throttleReflash = throttle(reflash, 500, { leading: false })
 function setFilter() {
-
   if (recentlyFilter.value === -1) {
     throttleReflash(diyRecentlyFilter.value)
   } else {
