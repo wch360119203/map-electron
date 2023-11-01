@@ -93,22 +93,18 @@ export class AccountBook {
 /**写入台账的wpid */
 export async function writeWpid(
   item: acRecord,
-  db: Knex = connectDB(),
-  autoDes = true,
+  trx: Knex.Transaction<any, any[]>,
 ) {
   const communityName = item.community_name
   if (!communityName) throw new Error('社区名称未找到')
-  const find = await WorkParam.instance.selectByCommunityName(
-    item.community_name,
-    item.valid_date,
-    db,
-    autoDes,
-  )
-  await AccountBook.instance.updateWpid(
-    item.id,
-    find.eNodeBID_CellID,
-    db,
-    autoDes,
-  )
-  return find.eNodeBID_CellID
+  const map = await WorkParam.instance.getCommunityMap()
+  const target = map.get(communityName)
+  if (!target) throw new Error("匹配失败");
+  return {
+    p: trx('account_book')
+      .where('id', '=', item.id)
+      .update({ wpid: target.eNodeBID_CellID })
+      .then((e) => e),
+    wpid: target.eNodeBID_CellID,
+  }
 }

@@ -139,31 +139,38 @@ async function matchBook(books: acRecord[]) {
   let successCount = 0,
     failCount = 0
   const db = connectDB()
-  const list = Array<Promise<void>>()
-  for (let i = 0; i < books.length; i++) {
-    const book = books[i]
-    if (book.wpid == null) {
-      list.push(
-        writeWpid(book, db, false)
-          .then((id) => {
-            book.wpid = id
-            successCount++
-          })
-          .catch(() => {
-            failCount++
-          }),
-      )
-    } else {
-      successCount++
-    }
-  }
-  await Promise.allSettled(list).finally(() => {
-    db.destroy()
-    ElMessage({
-      type: 'info',
-      message: `台账-工参匹配数量${successCount};未匹配数量${failCount}`,
+  const list = Array<Promise<any>>()
+  await db
+    .transaction(async (trx) => {
+      for (let i = 0; i < books.length; i++) {
+        const book = books[i]
+        if (book.wpid == null) {
+          list.push(
+            writeWpid(book, trx)
+              .then((payload) => {
+                book.wpid = payload.wpid
+                successCount++
+                return payload.p
+              })
+              .catch(() => {
+                failCount++
+              }),
+          )
+        } else {
+          successCount++
+        }
+      }
+      await Promise.allSettled(list).finally(() => {
+        trx.commit()
+      })
     })
-  })
+    .finally(() => {
+      db.destroy()
+      ElMessage({
+        type: 'info',
+        message: `台账-工参匹配数量${successCount};未匹配数量${failCount}`,
+      })
+    })
   return books
 }
 
