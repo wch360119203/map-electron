@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { defineComponent, h, onMounted, ref } from 'vue'
 
 /**
@@ -70,4 +71,7 @@ export function excelTime2JsTime(excelTime: number) {
       24 * 3600000 -
       8 * 3600000,
   )
+}
+export function formatDate(date: Date) {
+  return dayjs(date).format('YYYY/MM/DD')
 }

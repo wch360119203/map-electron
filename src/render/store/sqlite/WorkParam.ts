@@ -23,7 +23,7 @@ export class WorkParam {
       .filter((el) => el[fieldDict.eNodeBID_CellID] !== undefined)
       .map((el) => {
         const item: Partial<workParam> = {}
-        item.origin_data = 'JSON.stringify(el)'
+        item.origin_data = JSON.stringify(el)
         item.community_name = el[fieldDict.community_name]
         item.eNodeBID_CellID = el[fieldDict.eNodeBID_CellID]
         item.is_remove = 0
@@ -131,8 +131,14 @@ export class WorkParam {
   }
   async deleteAll() {
     const db = connectDB()
-    return db('work_param')
-      .truncate()
+    return db
+      .transaction((trx) => {
+        trx('account_book')
+          .update({ wpid: null })
+          .then(() => trx('work_param').truncate())
+          .then(trx.commit)
+          .catch(trx.rollback)
+      })
       .finally(() => {
         db.destroy()
       })

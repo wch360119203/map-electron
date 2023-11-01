@@ -86,7 +86,12 @@ export function bindPopup(layer: ILayer) {
         layer,
         customContent: (feature) => {
           const div = document.createElement('div')
-          const app = createApp(PopupVue, { data: feature })
+          const app = createApp(PopupVue, {
+            data: feature,
+            onClose: () => {
+              popup.hide()
+            },
+          })
           app.mount(div)
           unMount = () => app.unmount()
           return div

@@ -24,6 +24,11 @@
       </ElRadioGroup>
     </ElRow>
     <ElScrollbar max-height="30vh" v-loading=isloading>
+      <p>
+      <div class="check-card">
+        <el-checkbox v-model="wpShow" label="工参图层" />
+      </div>
+      </p>
       <p v-for="( item, index ) in  records " :key="index">
       <div class="check-card">
         <el-checkbox v-model="item.checked" @change="(e) => checkLayer(item.rid, e as boolean)" :label="item.name" />
@@ -35,7 +40,7 @@
 </template>
 <script setup lang="ts">
 import { BookRecords, WorkParam, bookRecords } from '@/render/store'
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { LayerManager } from '.'
 import { MapInstance } from '@/ts/l7map'
 import { throttle } from 'lodash-es'
@@ -48,7 +53,6 @@ const props = defineProps<{
 const mapInstance = props.map
 mapInstance.ready.then((scene) => {
   manager.linkScene(scene)
-  manager.createWpLayer()
 })
 WorkParam.instance.observer.on('inserted', () => {
   manager.updateWpLayer()
@@ -104,4 +108,15 @@ function setFilter() {
     reflash(recentlyFilter.value)
   }
 }
+const wpShow = ref(true)
+watch(wpShow, (isshow) => {
+  if (isshow) {
+    manager.wpLayers?.layer.show()
+    manager.wpLayers?.text.show()
+  } else {
+    manager.wpLayers?.layer.hide()
+    manager.wpLayers?.text.hide()
+    manager.wpLayers?.popup.hide()
+  }
+})
 </script>

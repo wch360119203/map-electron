@@ -38,7 +38,7 @@ export interface baseRecord {
   is_remove: number
   origin_data: string
   rid: number
-  wpid?: string
+  wpid?: string | null
   id: number
 }
 
@@ -46,6 +46,6 @@ export interface poi {
   id: number
   name: string
   geojson: string
-  remark?: string
+  remark?: string | null
   update_date: number
 }

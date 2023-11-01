@@ -6,7 +6,7 @@ import {
   writeWpid,
 } from '@/render/store'
 import { connectDB } from '@/render/store/DB'
-import { BaseLayer, PointLayer, Scene } from '@antv/l7'
+import { BaseLayer, LayerPopup, PointLayer, Scene } from '@antv/l7'
 import { Observer } from '@wuch96/utils'
 import {
   bindPopup,
@@ -21,13 +21,29 @@ export class LayerManager {
     sceneLinked(): void
   }>()
   layers = new Map<number, BaseLayer[]>()
-  wpLayers?: BaseLayer[]
+  wpLayers?: {
+    layer: PointLayer
+    text: PointLayer
+    popup: LayerPopup
+  }
   scene?: Scene
-  constructor() {}
+  private popups = new Map<BaseLayer, LayerPopup>()
+  constructor() {
+    this.createWpLayer().then((r) => {
+      this.wpLayers = r
+      if (this.scene) {
+        this.scene.addLayer(this.wpLayers.layer)
+        this.scene.addLayer(this.wpLayers.text)
+        this.scene.addPopup(this.wpLayers.popup)
+      }
+    })
+  }
   /**显示图层，懒加载 */
   async showLayer(rid: number) {
     const layers = await this.getLayers(rid)
-    layers.forEach(showLayer)
+    layers.forEach((layer) => {
+      layer.show()
+    })
     layers[0]?.fitBounds()
     this.observer.dispatch('layerChange', rid, true)
   }
@@ -35,7 +51,11 @@ export class LayerManager {
   async hideLayer(rid: number) {
     if (!this.layers.has(rid)) return
     const layers = await this.getLayers(rid)
-    layers.forEach(hideLayer)
+    layers.forEach((layer) => {
+      layer.hide()
+      const popup = this.popups.get(layer)
+      popup?.hide()
+    })
     this.observer.dispatch('layerChange', rid, false)
   }
   /**关联scene */
@@ -47,9 +67,11 @@ export class LayerManager {
         scene.addPopup(bindPopup(layer))
       })
     })
-    this.wpLayers?.forEach((layer) => {
-      scene.addLayer(layer)
-    })
+    if (this.wpLayers) {
+      scene.addLayer(this.wpLayers.layer)
+      scene.addLayer(this.wpLayers.text)
+      scene.addPopup(this.wpLayers.popup)
+    }
     this.observer.dispatch('sceneLinked')
   }
   /**根据运行商筛选图层 */
@@ -73,7 +95,9 @@ export class LayerManager {
       const ls = await this.createLayers(validBooks)
       if (this.scene) {
         ls.forEach((l) => this.scene!.addLayer(l))
-        this.scene.addPopup(bindPopup(ls[0]))
+        const popup = bindPopup(ls[0])
+        this.popups.set(ls[0], popup)
+        this.scene.addPopup(popup)
       }
       this.layers.set(rid, ls)
     }
@@ -104,7 +128,7 @@ export class LayerManager {
         db.destroy()
       })
   }
-  async createWpLayer() {
+  private async createWpLayer() {
     const data = await WorkParam.instance.selectAll()
     const geojson = createGeojson(
       data.map((el) => ({
@@ -114,13 +138,13 @@ export class LayerManager {
     )
     const layer1 = createL7Layer(geojson),
       layer2 = createL7TextLayer(geojson)
-    this.wpLayers = [layer1, layer2]
     layer1.show()
     layer2.show()
-    this.scene?.addLayer(layer1)
-    this.scene?.addLayer(layer2)
+    const popup = bindPopup(layer1)
+    return { layer: layer1, text: layer2, popup }
   }
   async updateWpLayer() {
+    if (!this.wpLayers) return
     const data = await WorkParam.instance.selectAll()
     const geojson = createGeojson(
       data.map((el) => ({
@@ -128,9 +152,8 @@ export class LayerManager {
         book: null,
       })),
     )
-    this.wpLayers?.forEach((layer) => {
-      layer.setData(geojson)
-    })
+    this.wpLayers.layer.setData(geojson)
+    this.wpLayers.text.setData(geojson)
   }
 }
 
@@ -172,11 +195,4 @@ async function matchBook(books: acRecord[]) {
       })
     })
   return books
-}
-
-function showLayer(layer: BaseLayer) {
-  layer.show()
-}
-function hideLayer(layer: BaseLayer) {
-  layer.hide()
 }
