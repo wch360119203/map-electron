@@ -24,7 +24,7 @@ const poiList = ref<poi[]>([])
 const featureMap = new Map<number, Feature<Polygon, {
   id: number;
   name: string;
-  remark?: string | undefined;
+  remark?: string | null;
   update_date: number;
 }>>()
 let removeLayerHandle: () => void
