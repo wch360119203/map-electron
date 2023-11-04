@@ -36,6 +36,7 @@
     "vue-tsc": "^1.8.5"
   },
   "dependencies": {
+    "@antv/l7-draw": "^3.0.34",
     "@turf/turf": "7.0.0-alpha.2",
     "@wuch96/coords-translate": "0.0.5",
     "@wuch96/utils": "^1.0.4",

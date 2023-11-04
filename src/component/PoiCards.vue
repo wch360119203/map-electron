@@ -1,5 +1,10 @@
 <template>
-  <h1>重点场景</h1>
+  <ElRow align="middle" style="gap: 18px;">
+    <h1>重点场景</h1>
+    <DrawPoi :map="mapInstance">
+      <ElButton :icon="EditPen" circle type="primary"></ElButton>
+    </DrawPoi>
+  </ElRow>
   <div>
     <div class="radius-box hover-highlight" v-for="(item, index) in poiList" :key="index" @click="fitBounds(item.id)">
       {{ item.name }}
@@ -7,15 +12,17 @@
   </div>
 </template>
 <script setup lang="ts">
+import { EditPen } from '@element-plus/icons-vue';
 import { Poi, poi } from '@/render/store';
 import { type MapInstance } from '@/ts/l7map';
-import { Feature, Polygon } from 'geojson';
+import type { Feature, Polygon } from 'geojson';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { coordEach } from '@turf/meta'
 import { featureCollection } from '@turf/helpers'
 import { wgs_gcj } from '@wuch96/coords-translate';
 import { PointLayer, PolygonLayer } from '@antv/l7';
 import bbox from '@turf/bbox'
+import DrawPoi from './DrawPoi/DrawPoi.vue';
 const props = defineProps<{
   map: MapInstance
 }>()
@@ -36,7 +43,7 @@ async function getAllPoi() {
   const polygonLayer = new PolygonLayer()
   polygonLayer.source(collection).shape('fill').color('skyblue').style({ opacity: 0.6, opacityLinear: { enable: true, dir: 'out' } })
   const textLayer = new PointLayer()
-  textLayer.source(collection).color('black').shape('name', 'text').size(18)
+  textLayer.source(collection).color('black').shape('name', 'text').size(15)
     .style({
       textAnchor: 'center', // 文本相对锚点的位置 center|left|right|top|bottom|top-left
       textOffset: [0, 0], // 文本相对锚点的偏移量 [水平, 垂直]
