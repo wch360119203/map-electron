@@ -5,7 +5,7 @@
     :accept="props.accept"
     multiple
     @change="triggerInput"
-    :style="{ visibility: 'hidden', position: 'absolute' }"
+    :style="{ visibility: 'hidden', position: 'fixed' }"
   />
   <span @click="inputDom?.click()">
     <slot></slot>

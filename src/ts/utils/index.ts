@@ -75,3 +75,13 @@ export function excelTime2JsTime(excelTime: number) {
 export function formatDate(date: Date) {
   return dayjs(date).format('YYYY/MM/DD')
 }
+
+/**获取最近的下一个周四 */
+export function getNearlyThursday(inVal: number) {
+  const inDate = dayjs(inVal)
+  if (inDate.day() >= 4) {
+    return inDate.add(7, 'd').day(4).valueOf()
+  } else {
+    return inDate.day(4).valueOf()
+  }
+}

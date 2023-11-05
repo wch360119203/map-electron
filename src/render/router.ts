@@ -19,6 +19,11 @@ const routes: RouteRecordRaw[] = [
     name: 'file',
     component: () => import('@/view').then((mod) => mod.FileManager),
   },
+  {
+    path: '/dataExtract',
+    name: 'dataExtract',
+    component: () => import('@/view').then((mod) => mod.DataExtract),
+  },
 ]
 export const router = createRouter({
   history: createWebHashHistory(),

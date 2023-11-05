@@ -32,6 +32,7 @@
             <ElDropdownItem @click="ipcRenderer.invoke('fullScreen')">全屏(F11)</ElDropdownItem>
             <ElDropdownItem @click="ipcRenderer.invoke('toggleDevTools')">控制台(Ctrl+Shift+I)</ElDropdownItem>
             <ElDivider></ElDivider>
+            <ElDropdownItem @click="router.push({ name: 'dataExtract' })">原表提取</ElDropdownItem>
             <ElDropdownItem @click="router.push({ name: 'file' })">文件管理</ElDropdownItem>
             <ElDropdownItem @click="router.push({ name: 'home' })">地图页</ElDropdownItem>
           </ElDropdownMenu>

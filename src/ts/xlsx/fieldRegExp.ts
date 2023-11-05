@@ -23,12 +23,26 @@ export const workParamRegExp: Record<keyof workParamInput, RegExp> = {
   device_type: /设备分类/,
 }
 
-export function matchHeader(headers: string[], reg: RegExp) {
+export const dataExtractRegExp = {
+  date: [/日期/, /结束时间/],
+  communityName: /小区名称/,
+  downPrb: /下行(业务信息)?PRB/i,
+}
+
+export function matchHeader(headers: string[], reg: RegExp | RegExp[]) {
   let count = 0
   let ret!: string
   for (let i = 0; i < headers.length; i++) {
     const str = headers[i]
-    if (reg.test(str)) {
+    if (Array.isArray(reg)) {
+      for (const r of reg) {
+        if(r.test(str)){
+          ret = str
+          count++
+          break
+        }
+      }
+    } else if (reg.test(str)) {
       ret = str
       count++
     }

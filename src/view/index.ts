@@ -1,3 +1,4 @@
 import HomeVue from './Home/Home.vue'
 import FileManager from './FileManager/FileManager.vue'
-export { HomeVue, FileManager }
+import DataExtract from './DataExtract/DataExtract.vue'
+export { HomeVue, FileManager, DataExtract }

@@ -19,7 +19,6 @@ import { Check, Close } from '@element-plus/icons-vue'
 import { MapInstance } from '@/ts/l7map';
 import { DrawPolygon } from '@antv/l7-draw';
 import { Poi } from '@/render/store';
-import { ElMessage } from 'element-plus';
 const props = defineProps<{ map: MapInstance }>()
 const map = props.map
 const isDrawing = ref(false)
@@ -47,8 +46,6 @@ function submit() {
   }
   getPoiName().then((name) => {
     return Poi.instance.insert([{ name, geojson: JSON.stringify(data[0]) }])
-  }).then(() => {
-    ElMessage.success('插入一条')
   }).finally(() => {
     stopDraw()
   })

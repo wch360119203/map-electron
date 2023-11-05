@@ -14,7 +14,7 @@
         <ElTableColumn width="170px" label="上传日期">
           <template #default=scope>{{ format(scope.row.update_date) }}</template>
         </ElTableColumn>
-        <ElTableColumn width="200" label="操作">
+        <ElTableColumn width="200px" label="操作">
           <template #default=scope>
             <el-popconfirm title="删除后不可恢复!" @confirm="delBook(scope.row.rid)">
               <template #reference>
