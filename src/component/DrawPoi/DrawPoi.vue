@@ -19,6 +19,8 @@ import { Check, Close } from '@element-plus/icons-vue'
 import { MapInstance } from '@/ts/l7map';
 import { DrawPolygon } from '@antv/l7-draw';
 import { Poi } from '@/render/store';
+import { coordEach } from '@turf/turf';
+import { gcj_wgs } from '@wuch96/coords-translate';
 const props = defineProps<{ map: MapInstance }>()
 const map = props.map
 const isDrawing = ref(false)
@@ -45,7 +47,15 @@ function submit() {
     return
   }
   getPoiName().then((name) => {
-    return Poi.instance.insert([{ name, geojson: JSON.stringify(data[0]) }])
+    const geojson = data[0]
+    coordEach(geojson, (coords,coordIndex) => {
+      if(coordIndex==0)return
+      const gcj = gcj_wgs({ lng: coords[0], lat: coords[1] })
+      coords[0] = gcj.lng
+      coords[1] = gcj.lat
+    })
+    console.log(geojson)
+    return Poi.instance.insert([{ name, geojson: JSON.stringify(geojson) }])
   }).finally(() => {
     stopDraw()
   })

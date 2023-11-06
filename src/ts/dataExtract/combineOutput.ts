@@ -12,7 +12,14 @@ export function combineOutput(
   arr.forEach(({ operator, data }) => {
     data.forEach((item) => {
       json.push(
-        createRow(operator, item.communityName, item.inTableData, item.avgPrb),
+        createRow(
+          operator,
+          item.communityName,
+          item.inTableData,
+          item.avgPrb,
+          item.allTime,
+          item.overloadTime,
+        ),
       )
     })
   })
@@ -30,6 +37,8 @@ function createRow(
   communityName: string,
   inTableData: number,
   avgPrb: number,
+  allTime: number,
+  overloadTime: number,
 ) {
   return {
     运营商: operator,
@@ -38,5 +47,7 @@ function createRow(
     '65%高负荷入表日期': formatDate(new Date(inTableData)),
     最新利用率: String(avgPrb),
     是否解决: '否',
+    出现次数: allTime,
+    超负荷次数: overloadTime,
   }
 }
