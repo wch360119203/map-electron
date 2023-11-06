@@ -2,7 +2,6 @@ import {
   AccountBook,
   WorkParam,
   acRecord,
-  workParam,
   writeWpid,
 } from '@/render/store'
 import { connectDB } from '@/render/store/DB'
@@ -74,13 +73,17 @@ export class LayerManager {
     }
     this.observer.dispatch('sceneLinked')
   }
-  /**根据运行商筛选图层 */
-  async filterLayers(rid: number, filter: string[]) {
+  /**根据时间筛选图层 */
+  async filterLayers(rid: number, recentlyDay?: number) {
     const layers = this.getLayers(rid)
-    const set = new Set(filter)
+    const oneday = 24 * 60 * 60 * 1000
+    const since = new Date().valueOf() - oneday * (recentlyDay ?? 1)
     ;(await layers).forEach((layer) => {
-      layer.filter('wp', (wp: workParam) => {
-        return set.has(wp.operator)
+      layer.filter('book', (book: acRecord | null) => {
+        if (recentlyDay == undefined) return true
+        const date = book?.['65_overload_date']
+        if (!date) return false
+        return date >= since.valueOf()
       })
     })
     this.scene?.render()

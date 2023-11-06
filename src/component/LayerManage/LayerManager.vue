@@ -4,6 +4,7 @@
     <ElRow>
       <ElText size="small">时间筛选：</ElText>
       <ElRadioGroup @change="setFilter" v-model="recentlyFilter">
+        <ElRadio :label="Infinity">全部</ElRadio>
         <ElRadio :label="7">最近7天</ElRadio>
         <ElRadio :label="14">最近14天</ElRadio>
         <ElRadio :label="30">最近30天</ElRadio>
@@ -61,9 +62,12 @@ WorkParam.instance.observer.on('inserted', () => {
 })
 const checkedSet = new Set<number>()
 const records = ref<(bookRecords & { checked: boolean })[]>([])
-async function reflash(recentlyDay: number) {
+async function reflash(recentlyDay?: number) {
   isloading.value = true
-  const newRecords = (await BookRecords.instance.select(recentlyDay, operatorFilter.value)).map((el) =>
+  records.value.forEach((item) => {
+    manager.filterLayers(item.rid, recentlyDay)
+  })
+  const newRecords = (await BookRecords.instance.select(undefined, operatorFilter.value)).map((el) =>
     reactive({
       ...el,
       checked: checkedSet.has(el.rid),
@@ -100,7 +104,7 @@ async function checkLayer(rid: number, isChecked: boolean) {
   manager.showLayer(rid)
 }
 
-const recentlyFilter = ref(7)
+const recentlyFilter = ref(Infinity)
 const diyRecentlyFilter = ref(30)
 const throttleReflash = throttle(reflash, 500, { leading: false })
 function setFilter() {
