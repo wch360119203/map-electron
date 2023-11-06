@@ -49,3 +49,10 @@ export interface poi {
   remark?: string | null
   update_date: number
 }
+
+export interface underlay {
+  id: number
+  geojson: string
+  color: string
+  style: string
+}

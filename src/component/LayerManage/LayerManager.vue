@@ -44,6 +44,7 @@ import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { LayerManager } from '.'
 import { MapInstance } from '@/ts/l7map'
 import { throttle } from 'lodash-es'
+import { addUnderlay } from './addUnderlay'
 const isloading = ref(true)
 const operatorFilter = ref('全部')
 const manager = new LayerManager()
@@ -52,6 +53,7 @@ const props = defineProps<{
 }>()
 const mapInstance = props.map
 mapInstance.ready.then((scene) => {
+  addUnderlay(scene)
   manager.linkScene(scene)
 })
 WorkParam.instance.observer.on('inserted', () => {

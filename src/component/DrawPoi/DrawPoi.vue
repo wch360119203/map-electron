@@ -54,7 +54,6 @@ function submit() {
       coords[0] = gcj.lng
       coords[1] = gcj.lat
     })
-    console.log(geojson)
     return Poi.instance.insert([{ name, geojson: JSON.stringify(geojson) }])
   }).finally(() => {
     stopDraw()
