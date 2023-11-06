@@ -33,9 +33,10 @@ function execJson(
   json: any[],
   headDict: Record<'data' | 'communityName' | 'prb', string>,
 ) {
+  const maxPrb = Math.max(...json.map((el) => el[headDict.prb] as number))
   const exJson = json.map((el) => {
     let prb = el[headDict.prb] as number
-    if (headDict.prb.includes('%')) prb /= 100
+    if (maxPrb > 1) prb /= 100
     const communityName = el[headDict.communityName]
     return {
       data: new Date(el[headDict.data]).valueOf(),
